@@ -4,12 +4,9 @@
 #include <unordered_map>
 #include <unordered_set>
 
-std::unordered_map<std::string, TokenType> keywordTypes{{"if", TokenType::IF},
-                                                        {"fi", TokenType::FI},
-                                                        {"then", TokenType::THEN},
-                                                        {"while", TokenType::WHILE},
-                                                        {"do", TokenType::DO},
-                                                        {"done", TokenType::DONE}};
+std::unordered_map<std::string, TokenType> keywordTypes{
+        {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
+        {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
 
 std::unordered_map<std::string, TokenType> operatorTypes{
         {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
@@ -31,8 +28,8 @@ std::vector<Token> Lexer::Tokenize() {
         }
         if (text[position] == ';') {
             result.push_back(TokenizeSemicol());
-        } 
-        if (operators.count(text[position])){
+        }
+        if (operators.count(text[position])) {
             result.push_back(TokenizeOperator());
         }
     };
@@ -53,7 +50,7 @@ Token Lexer::TokenizeNumber() {
 
 Token Lexer::TokenizeVarOrKeyword() {
     std::string tokenText;
-    std::unordered_set<std::string> keywords = {"if", "fi", "then", "while", "do" , "done"};
+    std::unordered_set<std::string> keywords = {"if", "fi", "then", "while", "do", "done"};
     while (isalpha(text[position]) || isdigit(text[position])) {
         tokenText += text[position];
         position++;
@@ -61,8 +58,7 @@ Token Lexer::TokenizeVarOrKeyword() {
     if (keywords.count(tokenText)) {
         if (!isalpha(text[position] && !isdigit(text[position]))) {
             return Token(keywordTypes.at(tokenText), tokenText);
-        }
-        else{
+        } else {
             std::cout << tokenText;
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
