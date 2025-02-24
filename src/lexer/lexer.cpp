@@ -80,6 +80,9 @@ Token Lexer::TokenizeOperator() {
 
 Lexer::Lexer(std::string filename) {
     std::ifstream file(filename);
+    if (!file) {
+        throw std::runtime_error("Error, while processing file");
+    }
     std::string temp;
     while (std::getline(file, temp)) {
         text += temp;
