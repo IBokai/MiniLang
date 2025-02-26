@@ -1,2 +1,2 @@
 # TinyC
-Tiny compiler of C-like language into RISC-V assembly code
+Tiny compiler of C-like language to RISC-V assembly code
