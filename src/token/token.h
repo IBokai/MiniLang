@@ -28,6 +28,7 @@ class Token {
 public:
     TokenType type;
     std::string text;
+    Token() = default;
     Token(TokenType type, std::string text) : type(type), text(text){};
 };
 
