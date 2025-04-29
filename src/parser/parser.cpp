@@ -31,18 +31,14 @@ std::unique_ptr<ASTNode> Parser::parseAssignemt() {
             AssignmentStatement(std::move(varname), std::move(expression)));
 }
 
-std::unique_ptr<Expression> Parser::parseExpression() {
-    return parseBinaryExpression();
-}
+std::unique_ptr<Expression> Parser::parseExpression() { return parseBinaryExpression(); }
 
 std::unique_ptr<Expression> Parser::parseBinaryExpression() {
     std::unique_ptr<Expression> left = parseUnaryExpression();
     return left;
 }
 
-std::unique_ptr<Expression> Parser::parseUnaryExpression() {
-    return nullptr;
-}
+std::unique_ptr<Expression> Parser::parseUnaryExpression() { return nullptr; }
 
 std::unique_ptr<ASTNode> Parser::parseIfStatement() { return nullptr; }
 
