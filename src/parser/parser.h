@@ -12,7 +12,9 @@ private:
     std::unique_ptr<ASTNode> parseIfStatement();
     std::unique_ptr<ASTNode> parseWhileStatement();
     std::unique_ptr<Expression> parseExpression();
-    Token consume() { return tokens_[position]; }
+    std::unique_ptr<Expression> parseBinaryExpression();
+    std::unique_ptr<Expression> parseUnaryExpression();
+    Token consume() { return tokens_[position++]; }
     Token peek() { return tokens_[position]; }
     void advance() { ++position; }
     Token current_token;
