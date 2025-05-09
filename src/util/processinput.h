@@ -1,8 +1,8 @@
-#include <iostream>
+#ifndef PROCESSINPUT_H
+#define PROCESSINPUT_H
 #include <stdexcept>
 #include <string>
-#include <vector>
-std::string processinput(char* argv[], int argc) {
+inline std::string processinput(char* argv[], int argc) {
     if (argc < 2) {
         throw std::runtime_error("No file provided");
     }
@@ -14,3 +14,4 @@ std::string processinput(char* argv[], int argc) {
     std::string result = argv[1];
     return result;
 }
+#endif

@@ -4,7 +4,7 @@
 
 class Parser {
 public:
-    Parser(std::vector<Token> tokens) : tokens_(std::move(tokens)), position(0) {}
+    explicit Parser(std::vector<Token> tokens) : tokens_(std::move(tokens)), position(0) {}
     std::vector<std::unique_ptr<ASTNode>> parse();
 
 private:
@@ -14,10 +14,16 @@ private:
     std::unique_ptr<Expression> parseExpression();
     std::unique_ptr<Expression> parseBinaryExpression();
     std::unique_ptr<Expression> parseUnaryExpression();
-    Token consume() { return tokens_[position++]; }
     Token peek() { return tokens_[position]; }
-    void advance() { ++position; }
+    Token advance() { return tokens_[position++]; }
+    bool match(TokenType const& type) {
+        if (tokens_[position].type == type) {
+            position++;
+            return true;
+        }
+        return false;
+    }
     Token current_token;
-    size_t position;
     std::vector<Token> tokens_;
+    size_t position;
 };

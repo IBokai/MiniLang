@@ -7,8 +7,7 @@
 std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
     std::vector<std::unique_ptr<ASTNode>> AST;
     while (position < tokens_.size()) {
-        current_token = consume();
-        std::cout << current_token.text << '\n';
+        current_token = advance();
         if (current_token.type == TokenType::VAR) {
             AST.push_back(std::move(parseAssignemt()));
         } else if (current_token.type == TokenType::IF) {
@@ -22,7 +21,7 @@ std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
 
 std::unique_ptr<ASTNode> Parser::parseAssignemt() {
     std::string varname = current_token.text;
-    current_token = consume();
+    current_token = advance();
     if (current_token.type != TokenType::ASSIGNMENT) {
         throw std::runtime_error("Assignemt sign expected");
     }
@@ -38,7 +37,15 @@ std::unique_ptr<Expression> Parser::parseBinaryExpression() {
     return left;
 }
 
-std::unique_ptr<Expression> Parser::parseUnaryExpression() { return nullptr; }
+std::unique_ptr<Expression> Parser::parseUnaryExpression() {
+    current_token = advance();
+    if (current_token.type == TokenType::INT) {
+        return std::make_unique<NumberExpression>(NumberExpression(std::stoi(current_token.text)));
+    } else if (current_token.type == TokenType::VAR) {
+        return std::make_unique<VariableExpression>(VariableExpression(current_token.text));
+    }
+    throw std::runtime_error("Unexpected symbol, while parsing unary expression");
+}
 
 std::unique_ptr<ASTNode> Parser::parseIfStatement() { return nullptr; }
 

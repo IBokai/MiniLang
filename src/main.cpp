@@ -8,9 +8,9 @@
 #include "util/processinput.h"
 
 int main(int argc, char* argv[]) {
-    std::string input = processinput(argv, argc);
+    std::string const input = processinput(argv, argc);
     Lexer lexer(input);
-    auto Tokens = lexer.Tokenize();
+    auto const Tokens = lexer.Tokenize();
     for (auto& token : Tokens) {
         std::cout << token.text << '\n';
     }

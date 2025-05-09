@@ -67,22 +67,22 @@ Token Lexer::TokenizeVarOrKeyword() {
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
     }
-    return Token(TokenType::VAR, tokenText);
+    return {TokenType::VAR, tokenText};
 }
 
 Token Lexer::TokenizeSemicol() {
     position++;
-    return Token(TokenType::SEMICOL, ";");
+    return {TokenType::SEMICOL, ";"};
 }
 
 Token Lexer::TokenizeOperator() {
     std::string tokenText;
     tokenText += line[position];
     position++;
-    return Token(operatorTypes.at(tokenText), tokenText);
+    return {operatorTypes.at(tokenText), tokenText};
 }
 
-Lexer::Lexer(std::string const filename) {
+Lexer::Lexer(std::string const& filename) {
     file.open(filename);
     if (!file) {
         throw std::runtime_error("Error, while processing file");
