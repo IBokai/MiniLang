@@ -5,6 +5,8 @@ include_directories(.)
 project(main)
 set(CMAKE_CXX_STANDARD 17) 
 
+add_compile_options(-O3 -Wall -Wextra -Wpedantic -Werror)
+
 add_executable(main
     src/main.cpp
     src/lexer/lexer.cpp
