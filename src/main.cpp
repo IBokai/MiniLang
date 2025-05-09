@@ -2,7 +2,6 @@
 #include <iostream>
 #include <string>
 
-#include "AST/ASTNode.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "util/processinput.h"

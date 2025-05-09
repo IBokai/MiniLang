@@ -1,7 +1,5 @@
 #include "parser.h"
 
-#include <iostream>
-
 #include "stdexcept"
 // TODO: add EOF token and rewrite position < tokens.size() to current_token.type != TokenType::EOF
 std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
