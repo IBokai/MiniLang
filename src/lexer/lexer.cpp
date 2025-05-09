@@ -29,7 +29,7 @@ std::vector<Token> Lexer::Tokenize() {
                 result.push_back(TokenizeNumber());
             }
             if (line[position] == ';') {
-                result.push_back(TokenizeSemicol());
+                result.push_back(TokenizeSemicolon());
             }
             if (operators.count(line[position])) {
                 result.push_back(TokenizeOperator());
@@ -70,7 +70,7 @@ Token Lexer::TokenizeVarOrKeyword() {
     return {TokenType::VAR, tokenText};
 }
 
-Token Lexer::TokenizeSemicol() {
+Token Lexer::TokenizeSemicolon() {
     position++;
     return {TokenType::SEMICOL, ";"};
 }
