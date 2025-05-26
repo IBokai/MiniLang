@@ -37,6 +37,7 @@ std::vector<Token> Lexer::Tokenize() {
         }
     }
     file.close();
+    result.push_back(Token(TokenType::ENDFILE, "EOF"));
     return result;
 }
 
