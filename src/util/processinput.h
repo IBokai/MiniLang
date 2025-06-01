@@ -1,7 +1,9 @@
 #ifndef PROCESSINPUT_H
 #define PROCESSINPUT_H
+
 #include <stdexcept>
 #include <string>
+
 inline std::string processinput(char* argv[], int argc) {
     if (argc < 2) {
         throw std::runtime_error("No file provided");
