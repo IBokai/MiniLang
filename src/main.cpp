@@ -13,7 +13,11 @@ int main(int argc, char* argv[]) {
     for (auto& token : Tokens) {
         std::cout << token.text << '\n';
     }
-    // Parser p(Tokens);
-    // auto AST = p.parse();
+    Parser p(Tokens);
+    auto const AST = p.parse();
+    for(auto& node : AST) {
+        int result = node->calculate();
+        std::cout << "RESULT: " << result << '\n';
+    }
     return 0;
 }
