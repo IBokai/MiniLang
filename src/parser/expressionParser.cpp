@@ -1,8 +1,6 @@
 #include "parser.h"
 
-std::unique_ptr<Expression> Parser::parseExpression() {
-    return parseBinaryExpression(0);
-}
+std::unique_ptr<Expression> Parser::parseExpression() { return parseBinaryExpression(0); }
 
 std::unique_ptr<Expression> Parser::parseBinaryExpression(int minPrecedence) {
     auto left = parseUnaryExpression();

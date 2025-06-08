@@ -1,6 +1,8 @@
 #include "parser.h"
-#include "../AST/ASTNode.h"
+
 #include <stdexcept>
+
+#include "../AST/ASTNode.h"
 
 std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
     std::vector<std::unique_ptr<ASTNode>> AST;
@@ -13,7 +15,7 @@ std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
 std::unique_ptr<Statement> Parser::parseStatement() {
     if (current_token.type == TokenType::VAR) {
         auto result = parseAssignment();
-        if(current_token.type != TokenType::SEMICOL){
+        if (current_token.type != TokenType::SEMICOL) {
             std::cout << current_token.text << '\n';
             throw std::runtime_error("Expected semicolon after assignment statement");
         }
