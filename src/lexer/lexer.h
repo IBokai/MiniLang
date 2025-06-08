@@ -16,7 +16,8 @@ private:
     Token TokenizeVarOrKeyword();
     Token TokenizeSemicol();
     Token TokenizeOperator();
-    std::string text;
-    int position;
+    std::ifstream file;
+    std::string line;
+    size_t position;
 };
 #endif
