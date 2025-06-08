@@ -16,33 +16,37 @@ std::unordered_map<std::string, TokenType> operatorTypes{
 std::vector<Token> Lexer::Tokenize() {
     std::vector<Token> result;
     std::unordered_set<char> operators = {'=', '+', '-', '/', '*', '<', '>', '(', ')'};
-    while (position != text.length()) {
-        if (isspace(text[position])) {
-            position++;
+    while (std::getline(file, line)) {
+        position = 0;
+        while (position != line.length()) {
+            if (isspace(line[position])) {
+                position++;
+            }
+            if (isalpha(line[position])) {
+                result.push_back(TokenizeVarOrKeyword());
+            }
+            if (isdigit(line[position])) {
+                result.push_back(TokenizeNumber());
+            }
+            if (line[position] == ';') {
+                result.push_back(TokenizeSemicol());
+            }
+            if (operators.count(line[position])) {
+                result.push_back(TokenizeOperator());
+            }
         }
-        if (isalpha(text[position])) {
-            result.push_back(TokenizeVarOrKeyword());
-        }
-        if (isdigit(text[position])) {
-            result.push_back(TokenizeNumber());
-        }
-        if (text[position] == ';') {
-            result.push_back(TokenizeSemicol());
-        }
-        if (operators.count(text[position])) {
-            result.push_back(TokenizeOperator());
-        }
-    };
+    }
+    file.close();
     return result;
 }
 
 Token Lexer::TokenizeNumber() {
     std::string tokenText;
-    while (isdigit(text[position])) {
-        tokenText += text[position];
+    while (isdigit(line[position])) {
+        tokenText += line[position];
         position++;
     }
-    if (!isalpha(text[position])) {
+    if (!isalpha(line[position])) {
         return Token(TokenType::INT, tokenText);
     }
     throw std::runtime_error("error tokenizing NUMBER");
@@ -51,12 +55,12 @@ Token Lexer::TokenizeNumber() {
 Token Lexer::TokenizeVarOrKeyword() {
     std::string tokenText;
     std::unordered_set<std::string> keywords = {"if", "fi", "then", "while", "do", "done"};
-    while (isalpha(text[position]) || isdigit(text[position])) {
-        tokenText += text[position];
+    while (isalpha(line[position]) || isdigit(line[position])) {
+        tokenText += line[position];
         position++;
     }
     if (keywords.count(tokenText)) {
-        if (!isalpha(text[position] && !isdigit(text[position]))) {
+        if (!isalpha(line[position] && !isdigit(line[position]))) {
             return Token(keywordTypes.at(tokenText), tokenText);
         } else {
             std::cout << tokenText;
@@ -73,19 +77,15 @@ Token Lexer::TokenizeSemicol() {
 
 Token Lexer::TokenizeOperator() {
     std::string tokenText;
-    tokenText += text[position];
+    tokenText += line[position];
     position++;
     return Token(operatorTypes.at(tokenText), tokenText);
 }
 
-Lexer::Lexer(std::string filename) {
-    std::ifstream file(filename);
+Lexer::Lexer(std::string const filename) {
+    file.open(filename);
     if (!file) {
         throw std::runtime_error("Error, while processing file");
-    }
-    std::string temp;
-    while (std::getline(file, temp)) {
-        text += temp;
     }
     position = 0;
 }
