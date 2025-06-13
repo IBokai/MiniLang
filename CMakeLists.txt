@@ -12,4 +12,5 @@ add_executable(main
     src/lexer/lexer.cpp
     src/parser/parser.cpp
     src/parser/expressionParser.cpp
+    src/parser/statementParser.cpp
 )
