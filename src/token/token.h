@@ -20,8 +20,8 @@ enum class TokenType {
     MULTIPLY,
     DIVIDE,
     SEMICOL,
-    RPAREN,
-    LPAREN
+    LPAREN,
+    RPAREN
 };
 
 class Token {
