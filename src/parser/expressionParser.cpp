@@ -21,6 +21,23 @@ std::unique_ptr<Expression> Parser::parseBinaryExpression(int minPrecedence) {
 }
 
 std::unique_ptr<Expression> Parser::parseUnaryExpression() {
+    if (current_token.type == TokenType::MINUS) {
+        advance();
+        return std::make_unique<UnaryExpression>(parsePrimaryExpression(), true);
+    }
+    return parsePrimaryExpression();
+}
+
+std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
+    if (current_token.type == TokenType::LPAREN) {
+        advance();
+        auto inner_expression = parseExpression();
+        if (current_token.type != TokenType::RPAREN) {
+            throw std::runtime_error("Expected ')'");
+        }
+        advance();
+        return inner_expression;
+    }
     if (current_token.type == TokenType::INT) {
         auto result = std::make_unique<NumberExpression>(std::stoi(current_token.text));
         advance();
@@ -31,5 +48,5 @@ std::unique_ptr<Expression> Parser::parseUnaryExpression() {
         advance();
         return result;
     }
-    throw std::runtime_error("Expected number or variable");
+    throw std::runtime_error("Expected number, variable or '('");
 }
