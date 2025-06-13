@@ -121,8 +121,6 @@ public:
         : condition_(std::move(condition)), body_(std::move(body)) {}
     void printInfo() override {}
 
-    int calculate() override { return 0; }
-
 private:
     std::unique_ptr<Expression> condition_;
     std::vector<std::unique_ptr<Statement>> body_;
@@ -131,16 +129,12 @@ private:
 class WhileStatement final : public Statement {
 public:
     explicit WhileStatement(std::unique_ptr<Expression> condition,
-                            std::unique_ptr<Statement> bodyStatement)
-        : condition_(std::move(condition)) {
-        body_.push_back(std::move(bodyStatement));
-    }
+                            std::vector<std::unique_ptr<Statement>> body)
+        : condition_(std::move(condition)), body_(std::move(body)) {}
     void printInfo() override {}
 
 private:
     std::unique_ptr<Expression> condition_;
     std::vector<std::unique_ptr<Statement>> body_;
-
-    int calculate() override { return 0; }
 };
 #endif
