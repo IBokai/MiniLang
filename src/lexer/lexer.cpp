@@ -11,7 +11,7 @@ std::unordered_map<std::string, TokenType> keywordTypes{
 std::unordered_map<std::string, TokenType> operatorTypes{
         {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
         {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
-        {">", TokenType::MORE},       {"(", TokenType::RPAREN},   {")", TokenType::LPAREN}};
+        {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
 
 std::vector<Token> Lexer::Tokenize() {
     std::vector<Token> result;
