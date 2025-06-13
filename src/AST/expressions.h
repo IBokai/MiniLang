@@ -83,6 +83,9 @@ class UnaryExpression : public Expression {
 public:
     UnaryExpression(std::unique_ptr<Expression> expression, bool negative = false)
         : expression_(std::move(expression)), negative_(negative) {}
+    int calculate() override {
+        return negative_ ? -expression_->calculate() : expression_->calculate();
+    }
 
 private:
     std::unique_ptr<Expression> expression_;
