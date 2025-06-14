@@ -8,13 +8,13 @@
 
 class Lexer {
 public:
-    Lexer(std::string filename);
+    explicit Lexer(std::string const& filename);
     std::vector<Token> Tokenize();
 
 private:
     Token TokenizeNumber();
     Token TokenizeVarOrKeyword();
-    Token TokenizeSemicol();
+    Token TokenizeSemicolon();
     Token TokenizeOperator();
     std::ifstream file;
     std::string line;

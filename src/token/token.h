@@ -21,7 +21,8 @@ enum class TokenType {
     DIVIDE,
     SEMICOL,
     LPAREN,
-    RPAREN
+    RPAREN,
+    ENDFILE
 };
 
 class Token {
@@ -29,7 +30,7 @@ public:
     TokenType type;
     std::string text;
     Token() = default;
-    Token(TokenType type, std::string text) : type(type), text(text){};
+    Token(TokenType const& type, std::string text) : type(type), text(std::move(text)){};
 };
 
 #endif

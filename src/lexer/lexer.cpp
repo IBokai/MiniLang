@@ -29,7 +29,7 @@ std::vector<Token> Lexer::Tokenize() {
                 result.push_back(TokenizeNumber());
             }
             if (line[position] == ';') {
-                result.push_back(TokenizeSemicol());
+                result.push_back(TokenizeSemicolon());
             }
             if (operators.count(line[position])) {
                 result.push_back(TokenizeOperator());
@@ -37,6 +37,7 @@ std::vector<Token> Lexer::Tokenize() {
         }
     }
     file.close();
+    result.push_back(Token(TokenType::ENDFILE, "EOF"));
     return result;
 }
 
@@ -67,22 +68,22 @@ Token Lexer::TokenizeVarOrKeyword() {
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
     }
-    return Token(TokenType::VAR, tokenText);
+    return {TokenType::VAR, tokenText};
 }
 
-Token Lexer::TokenizeSemicol() {
+Token Lexer::TokenizeSemicolon() {
     position++;
-    return Token(TokenType::SEMICOL, ";");
+    return {TokenType::SEMICOL, ";"};
 }
 
 Token Lexer::TokenizeOperator() {
     std::string tokenText;
     tokenText += line[position];
     position++;
-    return Token(operatorTypes.at(tokenText), tokenText);
+    return {operatorTypes.at(tokenText), tokenText};
 }
 
-Lexer::Lexer(std::string const filename) {
+Lexer::Lexer(std::string const& filename) {
     file.open(filename);
     if (!file) {
         throw std::runtime_error("Error, while processing file");
