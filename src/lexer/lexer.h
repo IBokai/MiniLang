@@ -18,6 +18,7 @@ private:
     Token TokenizeOperator();
     std::ifstream file;
     std::string line;
+    size_t line_index;
     size_t position;
 };
 #endif

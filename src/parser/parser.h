@@ -24,18 +24,19 @@ private:
     Token peek() { return tokens_[position]; }
     void advance() { current_token = tokens_[++position]; }
     [[nodiscard]] bool isBinaryOP() const noexcept {
-        return current_token.type == TokenType::LESS || current_token.type == TokenType::MORE ||
-               current_token.type == TokenType::PLUS || current_token.type == TokenType::MINUS ||
-               current_token.type == TokenType::MULTIPLY || current_token.type == TokenType::DIVIDE;
+        return current_token.type_ == TokenType::LESS || current_token.type_ == TokenType::MORE ||
+               current_token.type_ == TokenType::PLUS || current_token.type_ == TokenType::MINUS ||
+               current_token.type_ == TokenType::MULTIPLY ||
+               current_token.type_ == TokenType::DIVIDE;
     }
     static int getPrecedence(Token const& token) {
-        if (token.type == TokenType::LESS || token.type == TokenType::MORE) {
+        if (token.type_ == TokenType::LESS || token.type_ == TokenType::MORE) {
             return 1;
         }
-        if (token.type == TokenType::PLUS || token.type == TokenType::MINUS) {
+        if (token.type_ == TokenType::PLUS || token.type_ == TokenType::MINUS) {
             return 2;
         }
-        if (token.type == TokenType::MULTIPLY || token.type == TokenType::DIVIDE) {
+        if (token.type_ == TokenType::MULTIPLY || token.type_ == TokenType::DIVIDE) {
             return 3;
         }
         throw std::runtime_error("Unexpected token in getPrecedence method");

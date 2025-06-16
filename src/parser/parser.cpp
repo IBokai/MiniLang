@@ -6,7 +6,7 @@
 
 std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
     std::vector<std::unique_ptr<ASTNode>> AST;
-    while (current_token.type != TokenType::ENDFILE) {
+    while (current_token.type_ != TokenType::ENDFILE) {
         AST.push_back(parseStatement());
     }
     return AST;
