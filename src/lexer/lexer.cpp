@@ -20,18 +20,29 @@ std::vector<Token> Lexer::Tokenize() {
         while (position != line.length()) {
             if (isspace(line[position])) {
                 position++;
-            }
-            if (isalpha(line[position])) {
+                if (position >= line.size()) {
+                    break;
+                }
+            } else if (isalpha(line[position])) {
                 result.push_back(TokenizeVarOrKeyword());
-            }
-            if (isdigit(line[position])) {
+                if (position >= line.size()) {
+                    break;
+                }
+            } else if (isdigit(line[position])) {
                 result.push_back(TokenizeNumber());
-            }
-            if (line[position] == ';') {
+                if (position >= line.size()) {
+                    break;
+                }
+            } else if (line[position] == ';') {
                 result.push_back(TokenizeSemicolon());
-            }
-            if (operators.count(line[position])) {
+                if (position >= line.size()) {
+                    break;
+                }
+            } else if (operators.count(line[position])) {
                 result.push_back(TokenizeOperator());
+                if (position >= line.size()) {
+                    break;
+                }
             } else {
                 throw std::runtime_error("Unexpected symbol");
             }
@@ -69,7 +80,6 @@ Token Lexer::TokenizeVarOrKeyword() {
         if (!isalpha(line[position] && !isdigit(line[position]))) {
             return {keywordTypes.at(tokenText), tokenText, {line_index, starting_position}};
         } else {
-            std::cout << tokenText;
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
     }
