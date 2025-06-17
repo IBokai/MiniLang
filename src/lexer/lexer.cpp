@@ -32,6 +32,8 @@ std::vector<Token> Lexer::Tokenize() {
             }
             if (operators.count(line[position])) {
                 result.push_back(TokenizeOperator());
+            } else {
+                throw std::runtime_error("Unexpected symbol");
             }
         }
         position = 0;
