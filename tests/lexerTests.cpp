@@ -62,7 +62,7 @@ TEST(LexerTest, fibonacci) {
             {TokenType::VAR, "n", {0, 10}},       {TokenType::ASSIGNMENT, "=", {0, 11}},
             {TokenType::INT, "5", {0, 12}},       {TokenType::SEMICOL, ";", {0, 13}},
             {TokenType::WHILE, "while", {1, 0}},  {TokenType::VAR, "n", {1, 6}},
-            {TokenType::MORE, ">", {1, 7}},         {TokenType::INT, "1", {1, 8}},
+            {TokenType::MORE, ">", {1, 7}},       {TokenType::INT, "1", {1, 8}},
             {TokenType::DO, "do", {1, 10}},       {TokenType::VAR, "b", {2, 4}},
             {TokenType::ASSIGNMENT, "=", {2, 5}}, {TokenType::VAR, "a", {2, 6}},
             {TokenType::PLUS, "+", {2, 7}},       {TokenType::VAR, "b", {2, 8}},
@@ -79,5 +79,27 @@ TEST(LexerTest, fibonacci) {
         EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
         EXPECT_EQ(tokens[i].type_, correct_tokens[i].type_);
         EXPECT_EQ(tokens[i].position_, correct_tokens[i].position_);
+    }
+}
+
+TEST(LexerTest, unexpectedSymbol) {
+    std::string filename = "../samples/lexerErrors/unexpected-symbol.mlang";
+    Lexer l(filename);
+    try {
+        l.Tokenize();
+        FAIL() << "Expected to throw an exception";
+    } catch (const std::exception& e) {
+        EXPECT_EQ(std::string(e.what()), "Unexpected symbol");
+    }
+}
+
+TEST(LexerTest, wrongNumber) {
+    std::string filename = "../samples/lexerErrors/wrong-number.mlang";
+    Lexer l(filename);
+    try {
+        l.Tokenize();
+        FAIL() << "Expected to throw an exception";
+    } catch (const std::exception& e) {
+        EXPECT_EQ(std::string(e.what()), "error tokenizing NUMBER");
     }
 }
