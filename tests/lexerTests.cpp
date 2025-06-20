@@ -15,7 +15,7 @@ TEST(LexerTest, basic) {
             {TokenType::VAR, "a", {2, 2}},      {TokenType::PLUS, "+", {2, 3}},
             {TokenType::VAR, "b", {2, 4}},      {TokenType::SEMICOL, ";", {2, 5}},
             {TokenType::ENDFILE, "EOF", {3, 0}}};
-    EXPECT_EQ(tokens.size(), correct_tokens.size());
+    ASSERT_EQ(tokens.size(), correct_tokens.size());
     for (size_t i = 0; i < tokens.size(); i++) {
         EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
         EXPECT_EQ(tokens[i].type_, correct_tokens[i].type_);
@@ -42,7 +42,7 @@ TEST(LexerTest, factorial) {
             {TokenType::MINUS, "-", {3, 7}},      {TokenType::INT, "1", {3, 8}},
             {TokenType::SEMICOL, ";", {3, 9}},    {TokenType::DONE, "done", {4, 0}},
             {TokenType::ENDFILE, "EOF", {5, 0}}};
-    EXPECT_EQ(tokens.size(), correct_tokens.size());
+    ASSERT_EQ(tokens.size(), correct_tokens.size());
     for (size_t i = 0; i < tokens.size(); i++) {
         EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
         EXPECT_EQ(tokens[i].type_, correct_tokens[i].type_);
@@ -74,7 +74,7 @@ TEST(LexerTest, fibonacci) {
             {TokenType::MINUS, "-", {4, 7}},      {TokenType::INT, "1", {4, 8}},
             {TokenType::SEMICOL, ";", {4, 9}},    {TokenType::DONE, "done", {5, 0}},
             {TokenType::ENDFILE, "EOF", {6, 0}}};
-    EXPECT_EQ(tokens.size(), correct_tokens.size());
+    ASSERT_EQ(tokens.size(), correct_tokens.size());
     for (size_t i = 0; i < tokens.size(); i++) {
         EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
         EXPECT_EQ(tokens[i].type_, correct_tokens[i].type_);
