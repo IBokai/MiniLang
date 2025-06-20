@@ -11,3 +11,15 @@ jobs:
           run: chmod +x build.sh
         - name: build
           run: ./build.sh
+    tests:
+        runs-on: ubuntu-latest
+        steps:
+        - uses: actions/checkout@v4
+        - name: make executable
+          run: chmod +x build.sh
+        - name: build
+          run: ./build.sh
+        - name: change directory
+          run: cd build/
+        - name: run tests
+          run: ./tests
