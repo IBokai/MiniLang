@@ -82,6 +82,31 @@ TEST(LexerTest, fibonacci) {
     }
 }
 
+TEST(LexerTest, arithmeticExpression) {
+    std::string filename = "../samples/arithmetic-expression.mlang";
+    Lexer l(filename);
+    auto tokens = l.Tokenize();
+    std::vector<Token> correct_tokens = {
+            {TokenType::VAR, "expression", {0, 0}}, {TokenType::ASSIGNMENT, "=", {0, 11}},
+            {TokenType::LPAREN, "(", {0, 13}},      {TokenType::INT, "5", {0, 14}},
+            {TokenType::PLUS, "+", {0, 16}},        {TokenType::INT, "3", {0, 18}},
+            {TokenType::MULTIPLY, "*", {0, 20}},         {TokenType::MINUS, "-", {0, 22}},
+            {TokenType::INT, "2", {0, 23}},         {TokenType::RPAREN, ")", {0, 24}},
+            {TokenType::DIVIDE, "/", {0, 26}},         {TokenType::LPAREN, "(", {0, 28}},
+            {TokenType::INT, "4", {0, 29}},         {TokenType::MINUS, "-", {0, 31}},
+            {TokenType::INT, "1", {0, 33}},         {TokenType::RPAREN, ")", {0, 34}},
+            {TokenType::PLUS, "+", {0, 36}},        {TokenType::INT, "6", {0, 38}},
+            {TokenType::MULTIPLY, "*", {0, 40}},         {TokenType::INT, "2", {0, 42}},
+            {TokenType::MINUS, "-", {0, 44}},       {TokenType::INT, "1", {0, 46}},
+            {TokenType::SEMICOL, ";", {0, 47}},     {TokenType::ENDFILE, "EOF", {1, 0}}};
+    ASSERT_EQ(tokens.size(), correct_tokens.size());
+    for (size_t i = 0; i < tokens.size(); i++) {
+        EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
+        EXPECT_EQ(tokens[i].type_, correct_tokens[i].type_);
+        EXPECT_EQ(tokens[i].position_, correct_tokens[i].position_);
+    }
+}
+
 TEST(LexerTest, unexpectedSymbol) {
     std::string filename = "../samples/lexerErrors/unexpected-symbol.mlang";
     Lexer l(filename);
