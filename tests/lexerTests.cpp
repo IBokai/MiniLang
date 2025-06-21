@@ -95,7 +95,7 @@ TEST(LexerTest, arithmeticExpression) {
             {TokenType::DIVIDE, "/", {0, 26}},      {TokenType::LPAREN, "(", {0, 28}},
             {TokenType::INT, "4", {0, 29}},         {TokenType::MINUS, "-", {0, 31}},
             {TokenType::INT, "1", {0, 33}},         {TokenType::RPAREN, ")", {0, 34}},
-            {TokenType::ENDFILE, "EOF", {1, 0}}};
+            {TokenType::SEMICOL, ";", {0, 35}},     {TokenType::ENDFILE, "EOF", {1, 0}}};
     ASSERT_EQ(tokens.size(), correct_tokens.size());
     for (size_t i = 0; i < tokens.size(); i++) {
         EXPECT_EQ(tokens[i].text_, correct_tokens[i].text_);
