@@ -1,0 +1,10 @@
+a=0;
+b=0;
+while a<2 do
+    c=0;
+    while c<3 do
+        c=c+1;
+        b=b+1;
+    done
+    a=a+1;
+done

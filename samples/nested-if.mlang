@@ -1,0 +1,7 @@
+n=10;
+flag=0;
+if n>5 then
+    if n<15 then
+        flag=1;
+    fi
+fi
