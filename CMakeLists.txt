@@ -23,6 +23,7 @@ add_executable(main
 
 add_executable(tests
     tests/lexerTests.cpp
+    tests/parserTests.cpp
     src/lexer/lexer.cpp
     src/parser/parser.cpp
     src/parser/expressionParser.cpp
