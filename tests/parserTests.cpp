@@ -76,7 +76,7 @@ TEST(ParserTest, factorial) {
     EXPECT_EQ(AST.size(), 3);
     {  // statement: res=1;
         auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        EXPECT_NE(statement, nullptr);
+        ASSERT_NE(statement, nullptr);
         EXPECT_EQ(statement->getName(), "res");
         auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
         EXPECT_NE(expression, nullptr);
@@ -85,7 +85,7 @@ TEST(ParserTest, factorial) {
 
     {  // statement: n=6;
         auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        EXPECT_NE(statement, nullptr);
+        ASSERT_NE(statement, nullptr);
         EXPECT_EQ(statement->getName(), "n");
         auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
         EXPECT_NE(expression, nullptr);
@@ -94,16 +94,16 @@ TEST(ParserTest, factorial) {
 
     {  // statement: while
         auto* statement = dynamic_cast<WhileStatement*>(AST[2].get());
-        EXPECT_NE(statement, nullptr);
+        ASSERT_NE(statement, nullptr);
         {  // condition expression: n>1
             auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
-            EXPECT_NE(condition, nullptr);
+            ASSERT_NE(condition, nullptr);
             EXPECT_EQ(condition->getOP(), TokenType::MORE);
             auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-            EXPECT_NE(left, nullptr);
+            ASSERT_NE(left, nullptr);
             EXPECT_EQ(left->getName(), "n");
             auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-            EXPECT_NE(right, nullptr);
+            ASSERT_NE(right, nullptr);
             EXPECT_EQ(right->getValue(), 1);
         }
         {  // body
@@ -333,5 +333,245 @@ TEST(ParserTest, arithmeticExpression) {
         auto* inner_right = dynamic_cast<NumberExpression*>(right->getRightExpression().get());
         ASSERT_NE(inner_right, nullptr);
         EXPECT_EQ(inner_right->getValue(), 1);
+    }
+}
+
+TEST(ParserTest, nestedIf) {
+    std::vector<Token> tokens = {
+            {TokenType::VAR, "n", {0, 0}},      {TokenType::ASSIGNMENT, "=", {0, 1}},
+            {TokenType::INT, "10", {0, 2}},     {TokenType::SEMICOL, ";", {0, 4}},
+            {TokenType::VAR, "flag", {1, 0}},   {TokenType::ASSIGNMENT, "=", {1, 4}},
+            {TokenType::INT, "0", {1, 5}},      {TokenType::SEMICOL, ";", {1, 6}},
+            {TokenType::IF, "if", {2, 0}},      {TokenType::VAR, "n", {2, 3}},
+            {TokenType::MORE, ">", {2, 4}},     {TokenType::INT, "5", {2, 5}},
+            {TokenType::THEN, "then", {2, 7}},  {TokenType::IF, "if", {3, 4}},
+            {TokenType::VAR, "n", {3, 7}},      {TokenType::LESS, "<", {3, 8}},
+            {TokenType::INT, "15", {3, 9}},     {TokenType::THEN, "then", {3, 12}},
+            {TokenType::VAR, "flag", {4, 8}},   {TokenType::ASSIGNMENT, "=", {4, 12}},
+            {TokenType::INT, "1", {4, 13}},     {TokenType::SEMICOL, ";", {4, 14}},
+            {TokenType::FI, "fi", {5, 4}},      {TokenType::FI, "fi", {6, 0}},
+            {TokenType::ENDFILE, "EOF", {7, 0}}};
+    Parser p(tokens);
+    auto AST = p.parse();
+    EXPECT_EQ(AST.size(), 3);
+
+    {  // statement: n=10;
+        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
+        ASSERT_NE(statement, nullptr);
+        EXPECT_EQ(statement->getName(), "n");
+        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
+        ASSERT_NE(expression, nullptr);
+        EXPECT_EQ(expression->getValue(), 10);
+    }
+
+    {  // statement: flag = 0;
+        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
+        ASSERT_NE(statement, nullptr);
+        EXPECT_EQ(statement->getName(), "flag");
+        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
+        ASSERT_NE(expression, nullptr);
+        EXPECT_EQ(expression->getValue(), 0);
+    }
+
+    {  // statement: if-statement
+        auto* statement = dynamic_cast<IfStatement*>(AST[2].get());
+        ASSERT_NE(statement, nullptr);
+        {  // condition expression: n>5
+            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
+            ASSERT_NE(condition, nullptr);
+            ASSERT_EQ(condition->getOP(), TokenType::MORE);
+            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
+            ASSERT_NE(left, nullptr);
+            EXPECT_EQ(left->getName(), "n");
+            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
+            ASSERT_NE(right, nullptr);
+            EXPECT_EQ(right->getValue(), 5);
+        }
+
+        {  // body
+            auto const& body = statement->getBody();
+            EXPECT_EQ(body.size(), 1);
+            {  // body statment: if-statement(nested)
+                auto* bodyStatement = dynamic_cast<IfStatement*>(body[0].get());
+                ASSERT_NE(bodyStatement, nullptr);
+                {  // condition expression: n<15
+                    auto* condition =
+                            dynamic_cast<BinaryExpression*>(bodyStatement->getCondition().get());
+                    ASSERT_NE(condition, nullptr);
+                    EXPECT_EQ(condition->getOP(), TokenType::LESS);
+                    auto* left =
+                            dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
+                    ASSERT_NE(left, nullptr);
+                    EXPECT_EQ(left->getName(), "n");
+                    auto* right =
+                            dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
+                    ASSERT_NE(right, nullptr);
+                    EXPECT_EQ(right->getValue(), 15);
+                }
+
+                {  // nested body statement: flag=1;
+                    auto* nestedbodyStatement =
+                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[0].get());
+                    ASSERT_NE(nestedbodyStatement, nullptr);
+                    EXPECT_EQ(nestedbodyStatement->getName(), "flag");
+                    auto* expression = dynamic_cast<NumberExpression*>(
+                            nestedbodyStatement->getExpression().get());
+                    ASSERT_NE(expression, nullptr);
+                    EXPECT_EQ(expression->getValue(), 1);
+                }
+            }
+        }
+    }
+}
+
+TEST(ParserTest, nestedWhile) {
+    std::vector<Token> tokens = {
+            {TokenType::VAR, "a", {0, 0}},        {TokenType::ASSIGNMENT, "=", {0, 1}},
+            {TokenType::INT, "0", {0, 2}},        {TokenType::SEMICOL, ";", {0, 3}},
+            {TokenType::VAR, "b", {1, 0}},        {TokenType::ASSIGNMENT, "=", {1, 1}},
+            {TokenType::INT, "0", {1, 2}},        {TokenType::SEMICOL, ";", {1, 3}},
+            {TokenType::WHILE, "while", {2, 0}},  {TokenType::VAR, "a", {2, 6}},
+            {TokenType::LESS, "<", {2, 7}},       {TokenType::INT, "2", {2, 8}},
+            {TokenType::DO, "do", {2, 10}},       {TokenType::VAR, "c", {3, 4}},
+            {TokenType::ASSIGNMENT, "=", {3, 5}}, {TokenType::INT, "0", {3, 6}},
+            {TokenType::SEMICOL, ";", {3, 7}},    {TokenType::WHILE, "while", {4, 4}},
+            {TokenType::VAR, "c", {4, 10}},       {TokenType::LESS, "<", {4, 11}},
+            {TokenType::INT, "3", {4, 12}},       {TokenType::DO, "do", {4, 14}},
+            {TokenType::VAR, "c", {5, 8}},        {TokenType::ASSIGNMENT, "=", {5, 9}},
+            {TokenType::VAR, "c", {5, 10}},       {TokenType::PLUS, "+", {5, 11}},
+            {TokenType::INT, "1", {5, 12}},       {TokenType::SEMICOL, ";", {5, 13}},
+            {TokenType::VAR, "b", {6, 8}},        {TokenType::ASSIGNMENT, "=", {6, 9}},
+            {TokenType::VAR, "b", {6, 10}},       {TokenType::PLUS, "+", {6, 11}},
+            {TokenType::INT, "1", {6, 12}},       {TokenType::SEMICOL, ";", {6, 13}},
+            {TokenType::DONE, "done", {7, 4}},    {TokenType::VAR, "a", {8, 4}},
+            {TokenType::ASSIGNMENT, "=", {8, 5}}, {TokenType::VAR, "a", {8, 6}},
+            {TokenType::PLUS, "+", {8, 7}},       {TokenType::INT, "1", {8, 8}},
+            {TokenType::SEMICOL, ";", {8, 9}},    {TokenType::DONE, "done", {9, 0}},
+            {TokenType::ENDFILE, "EOF", {10, 0}}};
+    Parser p(tokens);
+    auto AST = p.parse();
+    EXPECT_EQ(AST.size(), 3);
+
+    {  // statement: a=0;
+        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
+        ASSERT_NE(statement, nullptr);
+        EXPECT_EQ(statement->getName(), "a");
+        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
+        ASSERT_NE(expression, nullptr);
+        EXPECT_EQ(expression->getValue(), 0);
+    }
+
+    {  // statement: b=0;
+        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
+        ASSERT_NE(statement, nullptr);
+        EXPECT_EQ(statement->getName(), "b");
+        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
+        ASSERT_NE(expression, nullptr);
+        EXPECT_EQ(expression->getValue(), 0);
+    }
+
+    {  // statement: while-statement
+        auto* statement = dynamic_cast<WhileStatement*>(AST[2].get());
+        ASSERT_NE(statement, nullptr);
+        {  // condition expression: a<2
+            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
+            ASSERT_NE(condition, nullptr);
+            ASSERT_EQ(condition->getOP(), TokenType::LESS);
+            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
+            ASSERT_NE(left, nullptr);
+            EXPECT_EQ(left->getName(), "a");
+            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
+            ASSERT_NE(right, nullptr);
+            EXPECT_EQ(right->getValue(), 2);
+        }
+
+        {  // body
+            auto const& body = statement->getBody();
+            EXPECT_EQ(body.size(), 3);
+            {  // body statement: c=0;
+                auto* bodyStatement = dynamic_cast<AssignmentStatement*>(body[0].get());
+                ASSERT_NE(bodyStatement, nullptr);
+                EXPECT_EQ(bodyStatement->getName(), "c");
+                auto* expression =
+                        dynamic_cast<NumberExpression*>(bodyStatement->getExpression().get());
+                ASSERT_NE(expression, nullptr);
+                EXPECT_EQ(expression->getValue(), 0);
+            }
+
+            {  // body statment: while-statement(nested)
+                auto* bodyStatement = dynamic_cast<WhileStatement*>(body[1].get());
+                ASSERT_NE(bodyStatement, nullptr);
+                {  // condition expression: c<3
+                    auto* condition =
+                            dynamic_cast<BinaryExpression*>(bodyStatement->getCondition().get());
+                    ASSERT_NE(condition, nullptr);
+                    EXPECT_EQ(condition->getOP(), TokenType::LESS);
+                    auto* left =
+                            dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
+                    ASSERT_NE(left, nullptr);
+                    EXPECT_EQ(left->getName(), "c");
+                    auto* right =
+                            dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
+                    ASSERT_NE(right, nullptr);
+                    EXPECT_EQ(right->getValue(), 3);
+                }
+
+                {  // nested body statement: c=c+1;
+                    auto* nestedbodyStatement =
+                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[0].get());
+                    ASSERT_NE(nestedbodyStatement, nullptr);
+                    EXPECT_EQ(nestedbodyStatement->getName(), "c");
+                    auto* expression = dynamic_cast<BinaryExpression*>(
+                            nestedbodyStatement->getExpression().get());
+                    ASSERT_NE(expression, nullptr);
+                    EXPECT_EQ(expression->getOP(), TokenType::PLUS);
+                    auto* left = dynamic_cast<VariableExpression*>(
+                            expression->getLeftExpression().get());
+                    ASSERT_NE(left, nullptr);
+                    EXPECT_EQ(left->getName(), "c");
+                    auto* right =
+                            dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
+                    ASSERT_NE(right, nullptr);
+                    EXPECT_EQ(right->getValue(), 1);
+                }
+
+                {  // nested body statement: b=b+1;
+                    auto* nestedbodyStatement =
+                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[1].get());
+                    ASSERT_NE(nestedbodyStatement, nullptr);
+                    EXPECT_EQ(nestedbodyStatement->getName(), "b");
+                    auto* expression = dynamic_cast<BinaryExpression*>(
+                            nestedbodyStatement->getExpression().get());
+                    ASSERT_NE(expression, nullptr);
+                    EXPECT_EQ(expression->getOP(), TokenType::PLUS);
+                    auto* left = dynamic_cast<VariableExpression*>(
+                            expression->getLeftExpression().get());
+                    ASSERT_NE(left, nullptr);
+                    EXPECT_EQ(left->getName(), "b");
+                    auto* right =
+                            dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
+                    ASSERT_NE(right, nullptr);
+                    EXPECT_EQ(right->getValue(), 1);
+                }
+            }
+
+            {  // body statement: a=a+1;
+                auto* bodyStatement = dynamic_cast<AssignmentStatement*>(body[2].get());
+                ASSERT_NE(bodyStatement, nullptr);
+                EXPECT_EQ(bodyStatement->getName(), "a");
+                auto* expression =
+                        dynamic_cast<BinaryExpression*>(bodyStatement->getExpression().get());
+                ASSERT_NE(expression, nullptr);
+                EXPECT_EQ(expression->getOP(), TokenType::PLUS);
+                auto* left =
+                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
+                ASSERT_NE(left, nullptr);
+                EXPECT_EQ(left->getName(), "a");
+                auto* right =
+                        dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
+                ASSERT_NE(right, nullptr);
+                EXPECT_EQ(right->getValue(), 1);
+            }
+        }
     }
 }
