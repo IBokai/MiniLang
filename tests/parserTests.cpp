@@ -694,3 +694,35 @@ TEST(ParserTest, noDone) {
         EXPECT_EQ(std::string(e.what()), "Expected done keyword before the end of the program");
     }
 }
+
+TEST(ParserTest, unexpectedToken) {
+    std::vector<Token> tokens = {
+            {TokenType::VAR, "a", {0, 0}},       {TokenType::ASSIGNMENT, "=", {0, 1}},
+            {TokenType::INT, "2", {0, 2}},       {TokenType::PLUS, "+", {0, 3}},
+            {TokenType::INT, "2", {0, 4}},       {TokenType::PLUS, "+", {0, 5}},
+            {TokenType::WHILE, "while", {0, 6}}, {TokenType::SEMICOL, ";", {0, 11}},
+            {TokenType::ENDFILE, "EOF", {1, 0}}};
+    Parser p(tokens);
+    try {
+        p.parse();
+        FAIL() << "Expected to throw an exception";
+    } catch (const std::exception& e) {
+        EXPECT_EQ(std::string(e.what()), "Expected number, variable or '('");
+    }
+}
+
+TEST(ParserTest, noClosingParenthesis) {
+    std::vector<Token> tokens = {
+            {TokenType::VAR, "a", {0, 0}},     {TokenType::ASSIGNMENT, "=", {0, 1}},
+            {TokenType::INT, "2", {0, 2}},     {TokenType::MULTIPLY, "*", {0, 3}},
+            {TokenType::LPAREN, "(", {0, 4}},  {TokenType::INT, "2", {0, 5}},
+            {TokenType::PLUS, "+", {0, 6}},    {TokenType::INT, "2", {0, 7}},
+            {TokenType::SEMICOL, ";", {0, 8}}, {TokenType::ENDFILE, "EOF", {1, 0}}};
+    Parser p(tokens);
+    try {
+        p.parse();
+        FAIL() << "Expected to throw an exception";
+    } catch (const std::exception& e) {
+        EXPECT_EQ(std::string(e.what()), "Expected ')'");
+    }
+}
