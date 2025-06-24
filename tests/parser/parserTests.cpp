@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "../../src/parser/parser.h"
+#include "../util/testsUtil.h"
 
 TEST(ParserTest, basic) {
     std::vector<Token> tokens = {
@@ -16,41 +17,22 @@ TEST(ParserTest, basic) {
     auto AST = p.parse();
     ASSERT_EQ(AST.size(), 3);
     {  // statement: a=3;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "a");
-
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 3);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 3);
     }
 
     {  // statement: b=4;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "b");
-
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 4);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 4);
     }
 
     {  // statement: c=a+b;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[2].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "c");
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[2].get(), "c");
 
-        auto* expression = dynamic_cast<BinaryExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getOP(), TokenType::PLUS);
-
-        auto* left = dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-        ASSERT_NE(left, nullptr);
-        EXPECT_EQ(left->getName(), "a");
-
-        auto* right = dynamic_cast<VariableExpression*>(expression->getRightExpression().get());
-        ASSERT_NE(right, nullptr);
-        EXPECT_EQ(right->getName(), "b");
+        auto* expression = ASTChecker<BinaryExpression>::check(statement->getExpression().get(),
+                                                               TokenType::PLUS);
+        ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
+        ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "b");
     }
 }
 
@@ -74,74 +56,40 @@ TEST(ParserTest, factorial) {
     auto AST = p.parse();
     EXPECT_EQ(AST.size(), 3);
     {  // statement: res=1;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "res");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        EXPECT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 1);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "res");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 1);
     }
 
     {  // statement: n=6;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "n");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        EXPECT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 6);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "n");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 6);
     }
 
     {  // statement: while
-        auto* statement = dynamic_cast<WhileStatement*>(AST[2].get());
-        ASSERT_NE(statement, nullptr);
+        auto* statement = ASTChecker<WhileStatement>::check(AST[2].get());
         {  // condition expression: n>1
-            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
-            ASSERT_NE(condition, nullptr);
-            EXPECT_EQ(condition->getOP(), TokenType::MORE);
-            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-            ASSERT_NE(left, nullptr);
-            EXPECT_EQ(left->getName(), "n");
-            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-            ASSERT_NE(right, nullptr);
-            EXPECT_EQ(right->getValue(), 1);
+            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+                                                                  TokenType::MORE);
+            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 1);
         }
         {  // body
             auto const& body = statement->getBody();
             EXPECT_EQ(body.size(), 2);
             {  // body statement: res=res*n;
-                auto* body_statement = dynamic_cast<AssignmentStatement*>(body[0].get());
-                ASSERT_NE(body_statement, nullptr);
-                EXPECT_EQ(body_statement->getName(), "res");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(body_statement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::MULTIPLY);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "res");
-                auto* right =
-                        dynamic_cast<VariableExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getName(), "n");
+                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[0].get(), "res");
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        body_statement->getExpression().get(), TokenType::MULTIPLY);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "res");
+                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "n");
             }
 
             {  // body statement: n=n-1;
-                auto* body_statement = dynamic_cast<AssignmentStatement*>(body[1].get());
-                ASSERT_NE(body_statement, nullptr);
-                EXPECT_EQ(body_statement->getName(), "n");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(body_statement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::MINUS);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "n");
-                auto* right =
-                        dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getValue(), 1);
+                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[1].get(), "n");
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        body_statement->getExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "n");
+                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
             }
         }
     }
@@ -172,101 +120,56 @@ TEST(ParserTest, fibonacci) {
     auto AST = p.parse();
     EXPECT_EQ(AST.size(), 4);
     {  // statement: a=0;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        EXPECT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "a");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        EXPECT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
     }
 
     {  // statement: b=1;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        EXPECT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "b");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        EXPECT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 1);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 1);
     }
 
     {  // statement: n=5;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[2].get());
-        EXPECT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "n");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        EXPECT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 5);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[2].get(), "n");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 5);
     }
 
     {  // statement: while
-        auto* statement = dynamic_cast<WhileStatement*>(AST[3].get());
-        EXPECT_NE(statement, nullptr);
+        auto* statement = ASTChecker<WhileStatement>::check(AST[3].get());
         {  // condition expression: n>1
-            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
-            EXPECT_NE(condition, nullptr);
-            EXPECT_EQ(condition->getOP(), TokenType::MORE);
-            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-            EXPECT_NE(left, nullptr);
-            EXPECT_EQ(left->getName(), "n");
-            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-            EXPECT_NE(right, nullptr);
-            EXPECT_EQ(right->getValue(), 1);
+            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+                                                                  TokenType::MORE);
+            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 1);
         }
         {  // body
             auto const& body = statement->getBody();
             EXPECT_EQ(body.size(), 3);
             {  // body statement: b=a+b;
-                auto* body_statement = dynamic_cast<AssignmentStatement*>(body[0].get());
-                ASSERT_NE(body_statement, nullptr);
-                EXPECT_EQ(body_statement->getName(), "b");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(body_statement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::PLUS);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "a");
-                auto* right =
-                        dynamic_cast<VariableExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getName(), "b");
+                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[0].get(), "b");
+
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        body_statement->getExpression().get(), TokenType::PLUS);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
+                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "b");
             }
 
             {  // body statement: a=b-a;
-                auto* body_statement = dynamic_cast<AssignmentStatement*>(body[1].get());
-                ASSERT_NE(body_statement, nullptr);
-                EXPECT_EQ(body_statement->getName(), "a");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(body_statement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::MINUS);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "b");
-                auto* right =
-                        dynamic_cast<VariableExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getName(), "a");
+                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[1].get(), "a");
+
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        body_statement->getExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "b");
+                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "a");
             }
 
             {  // body statement: n=n-1;
-                auto* body_statement = dynamic_cast<AssignmentStatement*>(body[2].get());
-                ASSERT_NE(body_statement, nullptr);
-                EXPECT_EQ(body_statement->getName(), "n");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(body_statement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::MINUS);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "n");
-                auto* right =
-                        dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getValue(), 1);
+                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[2].get(), "n");
+
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        body_statement->getExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "n");
+                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
             }
         }
     }
@@ -289,49 +192,31 @@ TEST(ParserTest, arithmeticExpression) {
     auto AST = p.parse();
     ASSERT_EQ(AST.size(), 1);
 
-    auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-    ASSERT_NE(statement, nullptr);
-    EXPECT_EQ(statement->getName(), "expression");
+    auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "expression");
 
     // full expression
-    auto* expression = dynamic_cast<BinaryExpression*>(statement->getExpression().get());
-    EXPECT_EQ(expression->getOP(), TokenType::DIVIDE);
+    auto* expression = ASTChecker<BinaryExpression>::check(statement->getExpression().get(),
+                                                           TokenType::DIVIDE);
 
-    auto* left = dynamic_cast<BinaryExpression*>(expression->getLeftExpression().get());
-    ASSERT_NE(left, nullptr);
+    auto* left = ASTChecker<BinaryExpression>::check(expression->getLeftExpression().get(),
+                                                     TokenType::PLUS);
     {
-        auto* inner_left = dynamic_cast<NumberExpression*>(left->getLeftExpression().get());
-        ASSERT_NE(inner_left, nullptr);
-        EXPECT_EQ(inner_left->getValue(), 5);
+        ASTChecker<NumberExpression>::check(left->getLeftExpression().get(), 5);
 
-        auto* inner_right = dynamic_cast<BinaryExpression*>(left->getRightExpression().get());
-        ASSERT_NE(inner_right, nullptr);
-        EXPECT_EQ(inner_right->getOP(), TokenType::MULTIPLY);
-        auto* inner_right_left =
-                dynamic_cast<NumberExpression*>(inner_right->getLeftExpression().get());
-        ASSERT_NE(inner_right_left, nullptr);
-        EXPECT_EQ(inner_right_left->getValue(), 3);
+        auto* inner_right = ASTChecker<BinaryExpression>::check(left->getRightExpression().get(),
+                                                                TokenType::MULTIPLY);
+        ASTChecker<NumberExpression>::check(inner_right->getLeftExpression().get(), 3);
+
         auto* inner_right_right =
-                dynamic_cast<UnaryExpression*>(inner_right->getRightExpression().get());
-        ASSERT_NE(inner_right_right, nullptr);
-        EXPECT_EQ(inner_right_right->isNegative(), true);
-        auto* inner_right_right_primary =
-                dynamic_cast<NumberExpression*>(inner_right_right->getExpression().get());
-        ASSERT_NE(inner_right_right_primary, nullptr);
-        EXPECT_EQ(inner_right_right_primary->getValue(), 2);
+                ASTChecker<UnaryExpression>::check(inner_right->getRightExpression().get(), true);
+        ASTChecker<NumberExpression>::check(inner_right_right->getExpression().get(), 2);
     }
 
-    auto* right = dynamic_cast<BinaryExpression*>(expression->getRightExpression().get());
-    ASSERT_NE(right, nullptr);
-    EXPECT_EQ(right->getOP(), TokenType::MINUS);
+    auto* right = ASTChecker<BinaryExpression>::check(expression->getRightExpression().get(),
+                                                      TokenType::MINUS);
     {
-        auto* inner_left = dynamic_cast<NumberExpression*>(right->getLeftExpression().get());
-        ASSERT_NE(inner_left, nullptr);
-        EXPECT_EQ(inner_left->getValue(), 4);
-
-        auto* inner_right = dynamic_cast<NumberExpression*>(right->getRightExpression().get());
-        ASSERT_NE(inner_right, nullptr);
-        EXPECT_EQ(inner_right->getValue(), 1);
+        ASTChecker<NumberExpression>::check(right->getLeftExpression().get(), 4);
+        ASTChecker<NumberExpression>::check(right->getRightExpression().get(), 1);
     }
 }
 
@@ -355,68 +240,43 @@ TEST(ParserTest, nestedIf) {
     EXPECT_EQ(AST.size(), 3);
 
     {  // statement: n=10;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "n");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 10);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "n");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 10);
     }
 
     {  // statement: flag = 0;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "flag");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "flag");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
     }
 
     {  // statement: if-statement
-        auto* statement = dynamic_cast<IfStatement*>(AST[2].get());
-        ASSERT_NE(statement, nullptr);
+        auto* statement = ASTChecker<IfStatement>::check(AST[2].get());
+
         {  // condition expression: n>5
-            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
-            ASSERT_NE(condition, nullptr);
-            ASSERT_EQ(condition->getOP(), TokenType::MORE);
-            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-            ASSERT_NE(left, nullptr);
-            EXPECT_EQ(left->getName(), "n");
-            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-            ASSERT_NE(right, nullptr);
-            EXPECT_EQ(right->getValue(), 5);
+            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+                                                                  TokenType::MORE);
+            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 5);
         }
 
         {  // body
             auto const& body = statement->getBody();
             EXPECT_EQ(body.size(), 1);
-            {  // body statment: if-statement(nested)
-                auto* bodyStatement = dynamic_cast<IfStatement*>(body[0].get());
-                ASSERT_NE(bodyStatement, nullptr);
+            {  // body statement: if-statement(nested)
+                auto* bodyStatement = ASTChecker<IfStatement>::check(body[0].get());
                 {  // condition expression: n<15
-                    auto* condition =
-                            dynamic_cast<BinaryExpression*>(bodyStatement->getCondition().get());
-                    ASSERT_NE(condition, nullptr);
-                    EXPECT_EQ(condition->getOP(), TokenType::LESS);
-                    auto* left =
-                            dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-                    ASSERT_NE(left, nullptr);
-                    EXPECT_EQ(left->getName(), "n");
-                    auto* right =
-                            dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-                    ASSERT_NE(right, nullptr);
-                    EXPECT_EQ(right->getValue(), 15);
+                    auto* condition = ASTChecker<BinaryExpression>::check(
+                            bodyStatement->getCondition().get(), TokenType::LESS);
+                    ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(),
+                                                          "n");
+                    ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 15);
                 }
 
                 {  // nested body statement: flag=1;
-                    auto* nestedbodyStatement =
-                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[0].get());
-                    ASSERT_NE(nestedbodyStatement, nullptr);
-                    EXPECT_EQ(nestedbodyStatement->getName(), "flag");
-                    auto* expression = dynamic_cast<NumberExpression*>(
-                            nestedbodyStatement->getExpression().get());
-                    ASSERT_NE(expression, nullptr);
-                    EXPECT_EQ(expression->getValue(), 1);
+                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
+                            bodyStatement->getBody()[0].get(), "flag");
+                    ASTChecker<NumberExpression>::check(nestedbodyStatement->getExpression().get(),
+                                                        1);
                 }
             }
         }
@@ -452,124 +312,69 @@ TEST(ParserTest, nestedWhile) {
     EXPECT_EQ(AST.size(), 3);
 
     {  // statement: a=0;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[0].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "a");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
     }
 
     {  // statement: b=0;
-        auto* statement = dynamic_cast<AssignmentStatement*>(AST[1].get());
-        ASSERT_NE(statement, nullptr);
-        EXPECT_EQ(statement->getName(), "b");
-        auto* expression = dynamic_cast<NumberExpression*>(statement->getExpression().get());
-        ASSERT_NE(expression, nullptr);
-        EXPECT_EQ(expression->getValue(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
+        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
     }
 
     {  // statement: while-statement
-        auto* statement = dynamic_cast<WhileStatement*>(AST[2].get());
-        ASSERT_NE(statement, nullptr);
+        auto* statement = ASTChecker<WhileStatement>::check(AST[2].get());
         {  // condition expression: a<2
-            auto* condition = dynamic_cast<BinaryExpression*>(statement->getCondition().get());
-            ASSERT_NE(condition, nullptr);
-            ASSERT_EQ(condition->getOP(), TokenType::LESS);
-            auto* left = dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-            ASSERT_NE(left, nullptr);
-            EXPECT_EQ(left->getName(), "a");
-            auto* right = dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-            ASSERT_NE(right, nullptr);
-            EXPECT_EQ(right->getValue(), 2);
+            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+                                                                  TokenType::LESS);
+            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "a");
+            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 2);
         }
 
         {  // body
             auto const& body = statement->getBody();
             EXPECT_EQ(body.size(), 3);
             {  // body statement: c=0;
-                auto* bodyStatement = dynamic_cast<AssignmentStatement*>(body[0].get());
-                ASSERT_NE(bodyStatement, nullptr);
-                EXPECT_EQ(bodyStatement->getName(), "c");
-                auto* expression =
-                        dynamic_cast<NumberExpression*>(bodyStatement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getValue(), 0);
+                auto* bodyStatement = ASTChecker<AssignmentStatement>::check(body[0].get(), "c");
+                ASTChecker<NumberExpression>::check(bodyStatement->getExpression().get(), 0);
             }
 
-            {  // body statment: while-statement(nested)
-                auto* bodyStatement = dynamic_cast<WhileStatement*>(body[1].get());
-                ASSERT_NE(bodyStatement, nullptr);
+            {  // body statement: while-statement(nested)
+                auto* bodyStatement = ASTChecker<WhileStatement>::check(body[1].get());
                 {  // condition expression: c<3
-                    auto* condition =
-                            dynamic_cast<BinaryExpression*>(bodyStatement->getCondition().get());
-                    ASSERT_NE(condition, nullptr);
-                    EXPECT_EQ(condition->getOP(), TokenType::LESS);
-                    auto* left =
-                            dynamic_cast<VariableExpression*>(condition->getLeftExpression().get());
-                    ASSERT_NE(left, nullptr);
-                    EXPECT_EQ(left->getName(), "c");
-                    auto* right =
-                            dynamic_cast<NumberExpression*>(condition->getRightExpression().get());
-                    ASSERT_NE(right, nullptr);
-                    EXPECT_EQ(right->getValue(), 3);
+                    auto* condition = ASTChecker<BinaryExpression>::check(
+                            bodyStatement->getCondition().get(), TokenType::LESS);
+                    ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(),
+                                                          "c");
+                    ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 3);
                 }
 
                 {  // nested body statement: c=c+1;
-                    auto* nestedbodyStatement =
-                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[0].get());
-                    ASSERT_NE(nestedbodyStatement, nullptr);
-                    EXPECT_EQ(nestedbodyStatement->getName(), "c");
-                    auto* expression = dynamic_cast<BinaryExpression*>(
-                            nestedbodyStatement->getExpression().get());
-                    ASSERT_NE(expression, nullptr);
-                    EXPECT_EQ(expression->getOP(), TokenType::PLUS);
-                    auto* left = dynamic_cast<VariableExpression*>(
-                            expression->getLeftExpression().get());
-                    ASSERT_NE(left, nullptr);
-                    EXPECT_EQ(left->getName(), "c");
-                    auto* right =
-                            dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
-                    ASSERT_NE(right, nullptr);
-                    EXPECT_EQ(right->getValue(), 1);
+                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
+                            bodyStatement->getBody()[0].get(), "c");
+                    auto* expression = ASTChecker<BinaryExpression>::check(
+                            nestedbodyStatement->getExpression().get(), TokenType::PLUS);
+                    ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(),
+                                                          "c");
+                    ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
                 }
 
                 {  // nested body statement: b=b+1;
-                    auto* nestedbodyStatement =
-                            dynamic_cast<AssignmentStatement*>(bodyStatement->getBody()[1].get());
-                    ASSERT_NE(nestedbodyStatement, nullptr);
-                    EXPECT_EQ(nestedbodyStatement->getName(), "b");
-                    auto* expression = dynamic_cast<BinaryExpression*>(
-                            nestedbodyStatement->getExpression().get());
-                    ASSERT_NE(expression, nullptr);
-                    EXPECT_EQ(expression->getOP(), TokenType::PLUS);
-                    auto* left = dynamic_cast<VariableExpression*>(
-                            expression->getLeftExpression().get());
-                    ASSERT_NE(left, nullptr);
-                    EXPECT_EQ(left->getName(), "b");
-                    auto* right =
-                            dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
-                    ASSERT_NE(right, nullptr);
-                    EXPECT_EQ(right->getValue(), 1);
+                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
+                            bodyStatement->getBody()[1].get(), "b");
+                    auto* expression = ASTChecker<BinaryExpression>::check(
+                            nestedbodyStatement->getExpression().get(), TokenType::PLUS);
+                    ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(),
+                                                          "b");
+                    ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
                 }
             }
 
             {  // body statement: a=a+1;
-                auto* bodyStatement = dynamic_cast<AssignmentStatement*>(body[2].get());
-                ASSERT_NE(bodyStatement, nullptr);
-                EXPECT_EQ(bodyStatement->getName(), "a");
-                auto* expression =
-                        dynamic_cast<BinaryExpression*>(bodyStatement->getExpression().get());
-                ASSERT_NE(expression, nullptr);
-                EXPECT_EQ(expression->getOP(), TokenType::PLUS);
-                auto* left =
-                        dynamic_cast<VariableExpression*>(expression->getLeftExpression().get());
-                ASSERT_NE(left, nullptr);
-                EXPECT_EQ(left->getName(), "a");
-                auto* right =
-                        dynamic_cast<NumberExpression*>(expression->getRightExpression().get());
-                ASSERT_NE(right, nullptr);
-                EXPECT_EQ(right->getValue(), 1);
+                auto* bodyStatement = ASTChecker<AssignmentStatement>::check(body[2].get(), "a");
+                auto* expression = ASTChecker<BinaryExpression>::check(
+                        bodyStatement->getExpression().get(), TokenType::PLUS);
+                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
+                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
             }
         }
     }
