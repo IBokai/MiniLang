@@ -19,6 +19,8 @@ public:
 
     int calculate() override { return value_; }
 
+    int const& getValue() { return value_; }
+
 private:
     int value_;
 };
@@ -31,6 +33,8 @@ public:
         std::cout << "name:" << name_ << '\n';
     }
     int calculate() override { return 0; }
+
+    std::string const& getName() { return name_; }
 
 private:
     std::string name_;
@@ -73,6 +77,10 @@ public:
         return 0;
     }
 
+    std::unique_ptr<Expression> const& getLeftExpression() { return left_; }
+    std::unique_ptr<Expression> const& getRightExpression() { return right_; }
+    TokenType const& getOP() { return op_; }
+
 private:
     std::unique_ptr<Expression> left_;
     TokenType op_;
@@ -86,6 +94,9 @@ public:
     int calculate() override {
         return negative_ ? -expression_->calculate() : expression_->calculate();
     }
+
+    std::unique_ptr<Expression> const& getExpression() { return expression_; }
+    bool isNegative() { return negative_; }
 
 private:
     std::unique_ptr<Expression> expression_;

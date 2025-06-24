@@ -22,6 +22,9 @@ public:
 
     int calculate() override { return expression_->calculate(); }
 
+    std::unique_ptr<Expression> const& getExpression() { return expression_; }
+    std::string const& getName() { return name_; }
+
 private:
     std::string name_;
     std::unique_ptr<Expression> expression_;
@@ -34,6 +37,9 @@ public:
         : condition_(std::move(condition)), body_(std::move(body)) {}
     void printInfo() override {}
 
+    std::unique_ptr<Expression> const& getCondition() { return condition_; }
+    std::vector<std::unique_ptr<Statement>> const& getBody() { return body_; }
+
 private:
     std::unique_ptr<Expression> condition_;
     std::vector<std::unique_ptr<Statement>> body_;
@@ -45,6 +51,9 @@ public:
                             std::vector<std::unique_ptr<Statement>> body)
         : condition_(std::move(condition)), body_(std::move(body)) {}
     void printInfo() override {}
+
+    std::unique_ptr<Expression> const& getCondition() { return condition_; }
+    std::vector<std::unique_ptr<Statement>> const& getBody() { return body_; }
 
 private:
     std::unique_ptr<Expression> condition_;
