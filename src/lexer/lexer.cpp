@@ -77,7 +77,7 @@ Token Lexer::TokenizeVarOrKeyword() {
         position++;
     }
     if (keywords.count(tokenText)) {
-        if (!isalpha(line[position] && !isdigit(line[position]))) {
+        if (!isalpha(line[position]) && !isdigit(line[position])) {
             return {keywordTypes.at(tokenText), tokenText, {line_index, starting_position}};
         } else {
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
