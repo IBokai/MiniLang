@@ -43,7 +43,7 @@ private:
 
 class UnaryExpression : public Expression {
 public:
-    UnaryExpression(std::unique_ptr<Expression> expression, bool negative = false)
+    explicit UnaryExpression(std::unique_ptr<Expression> expression, bool negative = false)
         : expression_(std::move(expression)), negative_(negative) {}
 
     std::unique_ptr<Expression> const& getExpression() { return expression_; }

@@ -22,7 +22,6 @@ private:
     std::unique_ptr<Expression> parseUnaryExpression();
     std::unique_ptr<Expression> parsePrimaryExpression();
 
-    Token peek() { return tokens_[position]; }
     void advance() { current_token = tokens_[++position]; }
 
     [[nodiscard]] bool isBinaryOP() const noexcept {
