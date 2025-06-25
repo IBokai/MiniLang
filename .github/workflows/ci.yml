@@ -23,3 +23,13 @@ jobs:
         - name: run tests
           working-directory: build
           run: ./tests
+    cppcheck:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: install cppcheck
+            run: sudo apt install cppcheck
+          - name: run cppcheck
+            run: cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/ tests/
+          
+    
