@@ -3,21 +3,11 @@
 
 #include "ASTNode.h"
 
-class Expression : public ASTNode {
-public:
-    void printInfo() override { std::cout << "Expression: "; }
-    int calculate() override { return 0; }
-};
+class Expression : public ASTNode {};
 
 class NumberExpression final : public Expression {
 public:
     explicit NumberExpression(int const value) : value_(value) {}
-    void printInfo() override {
-        std::cout << "Im Number expression\n";
-        std::cout << "value:" << value_ << '\n';
-    };
-
-    int calculate() override { return value_; }
 
     int const& getValue() { return value_; }
 
@@ -28,11 +18,6 @@ private:
 class VariableExpression final : public Expression {
 public:
     explicit VariableExpression(std::string name) : name_(std::move(name)) {}
-    void printInfo() override {
-        std::cout << "Im Variable expression\n";
-        std::cout << "name:" << name_ << '\n';
-    }
-    int calculate() override { return 0; }
 
     std::string const& getName() { return name_; }
 
@@ -45,37 +30,6 @@ public:
     explicit BinaryExpression(std::unique_ptr<Expression> left, TokenType op,
                               std::unique_ptr<Expression> right)
         : left_(std::move(left)), op_(op), right_(std::move(right)) {}
-    void printInfo() override {
-        std::cout << "Im Binary expression\n";
-        std::cout << "left:\n";
-        left_->printInfo();
-        std::cout << "right:\n";
-        right_->printInfo();
-    }
-
-    int calculate() override {
-        switch (op_) {
-            case TokenType::PLUS:
-                return left_->calculate() + right_->calculate();
-                break;
-            case TokenType::MINUS:
-                return left_->calculate() - right_->calculate();
-                break;
-            case TokenType::MULTIPLY:
-                return left_->calculate() * right_->calculate();
-                break;
-            case TokenType::DIVIDE:
-                return left_->calculate() / right_->calculate();
-                break;
-            case TokenType::LESS:
-                return left_->calculate() < right_->calculate();
-            case TokenType::MORE:
-                return left_->calculate() > right_->calculate();
-            default:
-                break;
-        }
-        return 0;
-    }
 
     std::unique_ptr<Expression> const& getLeftExpression() { return left_; }
     std::unique_ptr<Expression> const& getRightExpression() { return right_; }
@@ -91,9 +45,6 @@ class UnaryExpression : public Expression {
 public:
     UnaryExpression(std::unique_ptr<Expression> expression, bool negative = false)
         : expression_(std::move(expression)), negative_(negative) {}
-    int calculate() override {
-        return negative_ ? -expression_->calculate() : expression_->calculate();
-    }
 
     std::unique_ptr<Expression> const& getExpression() { return expression_; }
     bool isNegative() { return negative_; }

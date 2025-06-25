@@ -11,7 +11,5 @@
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
-    virtual void printInfo() = 0;
-    virtual int calculate() = 0;
 };
 #endif

@@ -16,9 +16,6 @@ int main(int argc, char* argv[]) {
     }
     Parser p(Tokens);
     auto const AST = p.parse();
-    for (auto& node : AST) {
-        int result = node->calculate();
-        std::cout << "RESULT: " << result << '\n';
-    }
+    std::cout << AST.size() << '\n';
     return 0;
 }
