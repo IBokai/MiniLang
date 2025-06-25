@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <string>
 
-inline std::string processinput(char const* argv[], int argc) {
+inline std::string processinput(char const* const argv[], int argc) {
     if (argc < 2) {
         throw std::runtime_error("No file provided");
     }
