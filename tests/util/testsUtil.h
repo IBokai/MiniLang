@@ -35,7 +35,7 @@ struct ASTChecker<AssignmentStatement> {
 template <>
 struct ASTChecker<VariableExpression> {
     static void check(ASTNode* node, std::string const& varname) {
-        auto* casted = dynamic_cast<VariableExpression*>(node);
+        auto const* casted = dynamic_cast<VariableExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected VariableExpression '" << typeid(VariableExpression).name()
                           << "', got " << typeid(*node).name();
@@ -47,7 +47,7 @@ struct ASTChecker<VariableExpression> {
 template <>
 struct ASTChecker<NumberExpression> {
     static void check(ASTNode* node, int const& value) {
-        auto* casted = dynamic_cast<NumberExpression*>(node);
+        auto const* casted = dynamic_cast<NumberExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected Number expression '" << typeid(NumberExpression).name()
                           << "', got " << typeid(*node).name();
