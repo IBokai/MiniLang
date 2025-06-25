@@ -11,8 +11,8 @@ public:
     explicit AssignmentStatement(std::string name, std::unique_ptr<Expression> expression)
         : name_(std::move(name)), expression_(std::move(expression)) {}
 
-    std::unique_ptr<Expression> const& getExpression() { return expression_; }
-    std::string const& getName() { return name_; }
+    std::unique_ptr<Expression> const& getExpression() const { return expression_; }
+    std::string const& getName() const { return name_; }
 
 private:
     std::string name_;
@@ -25,8 +25,8 @@ public:
                          std::vector<std::unique_ptr<Statement>> body)
         : condition_(std::move(condition)), body_(std::move(body)) {}
 
-    std::unique_ptr<Expression> const& getCondition() { return condition_; }
-    std::vector<std::unique_ptr<Statement>> const& getBody() { return body_; }
+    std::unique_ptr<Expression> const& getCondition() const { return condition_; }
+    std::vector<std::unique_ptr<Statement>> const& getBody() const { return body_; }
 
 private:
     std::unique_ptr<Expression> condition_;
@@ -39,8 +39,8 @@ public:
                             std::vector<std::unique_ptr<Statement>> body)
         : condition_(std::move(condition)), body_(std::move(body)) {}
 
-    std::unique_ptr<Expression> const& getCondition() { return condition_; }
-    std::vector<std::unique_ptr<Statement>> const& getBody() { return body_; }
+    std::unique_ptr<Expression> const& getCondition() const { return condition_; }
+    std::vector<std::unique_ptr<Statement>> const& getBody() const { return body_; }
 
 private:
     std::unique_ptr<Expression> condition_;
