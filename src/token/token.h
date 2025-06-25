@@ -31,7 +31,8 @@ public:
     std::string text_;
     std::pair<size_t, size_t> position_;
     Token() = default;
-    Token(TokenType const& type, std::string text, std::pair<size_t, size_t> cordinates) : type_(type), text_(std::move(text)), position_(std::move(cordinates)){};
+    Token(TokenType const& type, std::string text, std::pair<size_t, size_t> cordinates)
+        : type_(type), text_(std::move(text)), position_(std::move(cordinates)){};
 };
 
 #endif

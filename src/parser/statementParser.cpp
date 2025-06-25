@@ -33,7 +33,7 @@ std::unique_ptr<Statement> Parser::parseIfStatement() {
     auto condition = parseExpression();
     if (current_token.type_ != TokenType::THEN) {
         throw std::runtime_error(
-                "Expected then keyword after condition expression in if statement");
+            "Expected then keyword after condition expression in if statement");
     }
     advance();
     std::vector<std::unique_ptr<Statement>> body;
@@ -52,7 +52,7 @@ std::unique_ptr<Statement> Parser::parseWhileStatement() {
     auto condition = parseExpression();
     if (current_token.type_ != TokenType::DO) {
         throw std::runtime_error(
-                "Expected do keyword after condition epxression in while statement");
+            "Expected do keyword after condition epxression in while statement");
     }
     advance();
     std::vector<std::unique_ptr<Statement>> body;

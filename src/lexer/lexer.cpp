@@ -5,13 +5,13 @@
 #include <unordered_set>
 
 std::unordered_map<std::string, TokenType> keywordTypes{
-        {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
-        {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
+    {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
+    {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
 
 std::unordered_map<std::string, TokenType> operatorTypes{
-        {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
-        {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
-        {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
+    {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
+    {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
+    {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
 
 std::vector<Token> Lexer::Tokenize() {
     std::vector<Token> result;

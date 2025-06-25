@@ -21,14 +21,17 @@ private:
     std::unique_ptr<Expression> parseBinaryExpression(int minPrecedence);
     std::unique_ptr<Expression> parseUnaryExpression();
     std::unique_ptr<Expression> parsePrimaryExpression();
+
     Token peek() { return tokens_[position]; }
     void advance() { current_token = tokens_[++position]; }
+
     [[nodiscard]] bool isBinaryOP() const noexcept {
         return current_token.type_ == TokenType::LESS || current_token.type_ == TokenType::MORE ||
                current_token.type_ == TokenType::PLUS || current_token.type_ == TokenType::MINUS ||
                current_token.type_ == TokenType::MULTIPLY ||
                current_token.type_ == TokenType::DIVIDE;
     }
+
     static int getPrecedence(Token const& token) {
         if (token.type_ == TokenType::LESS || token.type_ == TokenType::MORE) {
             return 1;
@@ -41,6 +44,7 @@ private:
         }
         throw std::runtime_error("Unexpected token in getPrecedence method");
     }
+
     Token current_token;
     std::vector<Token> tokens_;
     size_t position;
