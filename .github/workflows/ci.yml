@@ -31,5 +31,11 @@ jobs:
             run: sudo apt install cppcheck
           - name: run cppcheck
             run: cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/ tests/
-          
-    
+    formatting-check: 
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: install clang-format
+            run: sudo apt install clang-format
+          - name: run clang-format check
+            run: find src/ tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
