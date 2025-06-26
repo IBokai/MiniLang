@@ -39,8 +39,8 @@ jobs:
             run: sudo apt install clang-format
           - name: run clang-format check
             run: |
-              find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
-              find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
+             find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
+             find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
     clang-tidy:
       runs-on: ubuntu-latest
       steps:
