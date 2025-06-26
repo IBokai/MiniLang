@@ -9,7 +9,7 @@
 
 template <typename ExpectedT>
 struct ASTChecker {
-    static ExpectedT* check(ASTNode* node) {
+    static ExpectedT* Check(ASTNode* node) {
         auto* casted = dynamic_cast<ExpectedT*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected " << typeid(ExpectedT).name() << ", got "
@@ -21,68 +21,68 @@ struct ASTChecker {
 
 template <>
 struct ASTChecker<AssignmentStatement> {
-    static AssignmentStatement* check(ASTNode* node, std::string const& varname) {
+    static AssignmentStatement* Check(ASTNode* node, std::string const& varname) {
         auto* casted = dynamic_cast<AssignmentStatement*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected Assignment statement '" << typeid(AssignmentStatement).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->getName(), varname);
+        EXPECT_EQ(casted->GetName(), varname);
         return casted;
     }
 };
 
 template <>
 struct ASTChecker<VariableExpression> {
-    static void check(ASTNode* node, std::string const& varname) {
+    static void Check(ASTNode* node, std::string const& varname) {
         auto const* casted = dynamic_cast<VariableExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected VariableExpression '" << typeid(VariableExpression).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->getName(), varname);
+        EXPECT_EQ(casted->GetName(), varname);
     }
 };
 
 template <>
 struct ASTChecker<NumberExpression> {
-    static void check(ASTNode* node, int const& value) {
+    static void Check(ASTNode* node, int const& value) {
         auto const* casted = dynamic_cast<NumberExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected Number expression '" << typeid(NumberExpression).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->getValue(), value);
+        EXPECT_EQ(casted->GetValue(), value);
     }
 };
 
 template <>
 struct ASTChecker<BinaryExpression> {
-    static BinaryExpression* check(ASTNode* node, TokenType OPtype) {
+    static BinaryExpression* Check(ASTNode* node, TokenType OPtype) {
         auto* casted = dynamic_cast<BinaryExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected Binary expression '" << typeid(BinaryExpression).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->getOP(), OPtype);
+        EXPECT_EQ(casted->GetOP(), OPtype);
         return casted;
     }
 };
 
 template <>
 struct ASTChecker<UnaryExpression> {
-    static UnaryExpression* check(ASTNode* node, bool negative) {
+    static UnaryExpression* Check(ASTNode* node, bool negative) {
         auto* casted = dynamic_cast<UnaryExpression*>(node);
         if (!casted) {
             ADD_FAILURE() << "Expected Unary expression '" << typeid(UnaryExpression).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->isNegative(), negative);
+        EXPECT_EQ(casted->IsNegative(), negative);
         return casted;
     }
 };
 
-inline void checkTokenVector(std::vector<Token> const& tokens,
+inline void CheckTokenVector(std::vector<Token> const& tokens,
                              std::vector<Token> const& correct_tokens) {
     ASSERT_EQ(tokens.size(), correct_tokens.size());
     for (size_t i = 0; i < tokens.size(); i++) {

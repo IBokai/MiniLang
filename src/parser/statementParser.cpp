@@ -1,67 +1,67 @@
 #include "parser.h"
 
-std::unique_ptr<Statement> Parser::parseStatement() {
-    if (current_token.type_ == TokenType::VAR) {
-        auto result = parseAssignment();
-        if (current_token.type_ != TokenType::SEMICOL) {
-            std::cout << current_token.text_ << '\n';
+std::unique_ptr<Statement> Parser::ParseStatement() {
+    if (current_token_.type_ == TokenType::VAR) {
+        auto result = ParseAssignment();
+        if (current_token_.type_ != TokenType::SEMICOL) {
+            std::cout << current_token_.text_ << '\n';
             throw std::runtime_error("Expected semicolon after assignment statement");
         }
-        advance();
+        Advance();
         return result;
-    } else if (current_token.type_ == TokenType::IF) {
-        return parseIfStatement();
-    } else if (current_token.type_ == TokenType::WHILE) {
-        return parseWhileStatement();
+    } else if (current_token_.type_ == TokenType::IF) {
+        return ParseIfStatement();
+    } else if (current_token_.type_ == TokenType::WHILE) {
+        return ParseWhileStatement();
     } else {
         throw std::runtime_error("Expected statement");
     }
 }
 
-std::unique_ptr<Statement> Parser::parseAssignment() {
-    std::string const varname = current_token.text_;
-    advance();
-    if (current_token.type_ != TokenType::ASSIGNMENT) {
+std::unique_ptr<Statement> Parser::ParseAssignment() {
+    std::string const varname = current_token_.text_;
+    Advance();
+    if (current_token_.type_ != TokenType::ASSIGNMENT) {
         throw std::runtime_error("Expected assignment sign after variable name");
     }
-    advance();
-    return std::make_unique<AssignmentStatement>(varname, parseExpression());
+    Advance();
+    return std::make_unique<AssignmentStatement>(varname, ParseExpression());
 }
 
-std::unique_ptr<Statement> Parser::parseIfStatement() {
-    advance();
-    auto condition = parseExpression();
-    if (current_token.type_ != TokenType::THEN) {
+std::unique_ptr<Statement> Parser::ParseIfStatement() {
+    Advance();
+    auto condition = ParseExpression();
+    if (current_token_.type_ != TokenType::THEN) {
         throw std::runtime_error(
             "Expected then keyword after condition expression in if statement");
     }
-    advance();
+    Advance();
     std::vector<std::unique_ptr<Statement>> body;
-    while (current_token.type_ != TokenType::FI) {
-        if (current_token.type_ == TokenType::ENDFILE) {
+    while (current_token_.type_ != TokenType::FI) {
+        if (current_token_.type_ == TokenType::ENDFILE) {
             throw std::runtime_error("Expected fi keyword before the end of the program");
         }
-        body.push_back(parseStatement());
+        body.push_back(ParseStatement());
     }
-    advance();
+    Advance();
     return std::make_unique<IfStatement>(std::move(condition), std::move(body));
 }
 
-std::unique_ptr<Statement> Parser::parseWhileStatement() {
-    advance();
-    auto condition = parseExpression();
-    if (current_token.type_ != TokenType::DO) {
+std::unique_ptr<Statement> Parser::ParseWhileStatement() {
+    Advance();
+    auto condition = ParseExpression();
+    if (current_token_.type_ != TokenType::DO) {
         throw std::runtime_error(
             "Expected do keyword after condition epxression in while statement");
     }
-    advance();
+    Advance();
     std::vector<std::unique_ptr<Statement>> body;
-    while (current_token.type_ != TokenType::DONE) {
-        if (current_token.type_ == TokenType::ENDFILE) {
+    while (current_token_.type_ != TokenType::DONE) {
+        if (current_token_.type_ == TokenType::ENDFILE) {
             throw std::runtime_error("Expected done keyword before the end of the program");
         }
-        body.push_back(parseStatement());
+        body.push_back(ParseStatement());
     }
-    advance();
+    Advance();
     return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
 }

@@ -7,15 +7,15 @@
 #include "util/processinput.h"
 
 int main(int argc, char* argv[]) {
-    std::string const input = processinput(argv, argc);
+    std::string const input = ProcessInput(argv, argc);
     Lexer lexer(input);
-    auto const Tokens = lexer.Tokenize();
-    for (auto const& token : Tokens) {
+    auto const tokens = lexer.Tokenize();
+    for (auto const& token : tokens) {
         std::cout << token.text_ << ' ' << token.position_.first << ' ' << token.position_.second
                   << '\n';
     }
-    Parser p(Tokens);
-    auto const AST = p.parse();
-    std::cout << AST.size() << '\n';
+    Parser p(tokens);
+    auto const ast = p.Parse();
+    std::cout << ast.size() << '\n';
     return 0;
 }

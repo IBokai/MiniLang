@@ -14,25 +14,25 @@ TEST(ParserTest, basic) {
         {TokenType::VAR, "b", {2, 4}},      {TokenType::SEMICOL, ";", {2, 5}},
         {TokenType::ENDFILE, "EOF", {3, 0}}};
     Parser p(tokens);
-    auto AST = p.parse();
-    ASSERT_EQ(AST.size(), 3);
+    auto ast = p.Parse();
+    ASSERT_EQ(ast.size(), 3);
     {  // statement: a=3;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 3);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "a");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 3);
     }
 
     {  // statement: b=4;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 4);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[1].get(), "b");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 4);
     }
 
     {  // statement: c=a+b;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[2].get(), "c");
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[2].get(), "c");
 
         auto* expression =
-            ASTChecker<BinaryExpression>::check(statement->getExpression().get(), TokenType::PLUS);
-        ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
-        ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "b");
+            ASTChecker<BinaryExpression>::Check(statement->GetExpression().get(), TokenType::PLUS);
+        ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "a");
+        ASTChecker<VariableExpression>::Check(expression->GetRightExpression().get(), "b");
     }
 }
 
@@ -53,45 +53,45 @@ TEST(ParserTest, factorial) {
         {TokenType::SEMICOL, ";", {3, 9}},    {TokenType::DONE, "done", {4, 0}},
         {TokenType::ENDFILE, "EOF", {5, 0}}};
     Parser p(tokens);
-    auto AST = p.parse();
-    EXPECT_EQ(AST.size(), 3);
+    auto ast = p.Parse();
+    EXPECT_EQ(ast.size(), 3);
     {  // statement: res=1;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "res");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 1);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "res");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 1);
     }
 
     {  // statement: n=6;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "n");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 6);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[1].get(), "n");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 6);
     }
 
     {  // statement: while
-        auto* statement = ASTChecker<WhileStatement>::check(AST[2].get());
+        auto* statement = ASTChecker<WhileStatement>::Check(ast[2].get());
         {  // condition expression: n>1
-            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+            auto* condition = ASTChecker<BinaryExpression>::Check(statement->GetCondition().get(),
                                                                   TokenType::MORE);
-            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
-            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 1);
+            ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 1);
         }
         {  // body
-            auto const& body = statement->getBody();
+            auto const& body = statement->GetBody();
             EXPECT_EQ(body.size(), 2);
             {  // body statement: res=res*n;
-                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[0].get(), "res");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[0].get(), "res");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    body_statement->getExpression().get(), TokenType::MULTIPLY);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "res");
-                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "n");
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::MULTIPLY);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "res");
+                ASTChecker<VariableExpression>::Check(expression->GetRightExpression().get(), "n");
             }
 
             {  // body statement: n=n-1;
-                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[1].get(), "n");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[1].get(), "n");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    body_statement->getExpression().get(), TokenType::MINUS);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "n");
-                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "n");
+                ASTChecker<NumberExpression>::Check(expression->GetRightExpression().get(), 1);
             }
         }
     }
@@ -119,59 +119,59 @@ TEST(ParserTest, fibonacci) {
         {TokenType::SEMICOL, ";", {4, 9}},    {TokenType::DONE, "done", {5, 0}},
         {TokenType::ENDFILE, "EOF", {6, 0}}};
     Parser p(tokens);
-    auto AST = p.parse();
-    EXPECT_EQ(AST.size(), 4);
+    auto ast = p.Parse();
+    EXPECT_EQ(ast.size(), 4);
     {  // statement: a=0;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "a");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 0);
     }
 
     {  // statement: b=1;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 1);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[1].get(), "b");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 1);
     }
 
     {  // statement: n=5;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[2].get(), "n");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 5);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[2].get(), "n");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 5);
     }
 
     {  // statement: while
-        auto* statement = ASTChecker<WhileStatement>::check(AST[3].get());
+        auto* statement = ASTChecker<WhileStatement>::Check(ast[3].get());
         {  // condition expression: n>1
-            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+            auto* condition = ASTChecker<BinaryExpression>::Check(statement->GetCondition().get(),
                                                                   TokenType::MORE);
-            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
-            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 1);
+            ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 1);
         }
         {  // body
-            auto const& body = statement->getBody();
+            auto const& body = statement->GetBody();
             EXPECT_EQ(body.size(), 3);
             {  // body statement: b=a+b;
-                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[0].get(), "b");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[0].get(), "b");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    body_statement->getExpression().get(), TokenType::PLUS);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
-                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "b");
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::PLUS);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "a");
+                ASTChecker<VariableExpression>::Check(expression->GetRightExpression().get(), "b");
             }
 
             {  // body statement: a=b-a;
-                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[1].get(), "a");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[1].get(), "a");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    body_statement->getExpression().get(), TokenType::MINUS);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "b");
-                ASTChecker<VariableExpression>::check(expression->getRightExpression().get(), "a");
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "b");
+                ASTChecker<VariableExpression>::Check(expression->GetRightExpression().get(), "a");
             }
 
             {  // body statement: n=n-1;
-                auto* body_statement = ASTChecker<AssignmentStatement>::check(body[2].get(), "n");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[2].get(), "n");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    body_statement->getExpression().get(), TokenType::MINUS);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "n");
-                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::MINUS);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "n");
+                ASTChecker<NumberExpression>::Check(expression->GetRightExpression().get(), 1);
             }
         }
     }
@@ -191,34 +191,34 @@ TEST(ParserTest, arithmeticExpression) {
 
     Parser p(tokens);
 
-    auto AST = p.parse();
-    ASSERT_EQ(AST.size(), 1);
+    auto ast = p.Parse();
+    ASSERT_EQ(ast.size(), 1);
 
-    auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "expression");
+    auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "expression");
 
     // full expression
     auto* expression =
-        ASTChecker<BinaryExpression>::check(statement->getExpression().get(), TokenType::DIVIDE);
+        ASTChecker<BinaryExpression>::Check(statement->GetExpression().get(), TokenType::DIVIDE);
 
     auto* left =
-        ASTChecker<BinaryExpression>::check(expression->getLeftExpression().get(), TokenType::PLUS);
+        ASTChecker<BinaryExpression>::Check(expression->GetLeftExpression().get(), TokenType::PLUS);
     {
-        ASTChecker<NumberExpression>::check(left->getLeftExpression().get(), 5);
+        ASTChecker<NumberExpression>::Check(left->GetLeftExpression().get(), 5);
 
-        auto* inner_right = ASTChecker<BinaryExpression>::check(left->getRightExpression().get(),
+        auto* inner_right = ASTChecker<BinaryExpression>::Check(left->GetRightExpression().get(),
                                                                 TokenType::MULTIPLY);
-        ASTChecker<NumberExpression>::check(inner_right->getLeftExpression().get(), 3);
+        ASTChecker<NumberExpression>::Check(inner_right->GetLeftExpression().get(), 3);
 
         auto* inner_right_right =
-            ASTChecker<UnaryExpression>::check(inner_right->getRightExpression().get(), true);
-        ASTChecker<NumberExpression>::check(inner_right_right->getExpression().get(), 2);
+            ASTChecker<UnaryExpression>::Check(inner_right->GetRightExpression().get(), true);
+        ASTChecker<NumberExpression>::Check(inner_right_right->GetExpression().get(), 2);
     }
 
-    auto* right = ASTChecker<BinaryExpression>::check(expression->getRightExpression().get(),
+    auto* right = ASTChecker<BinaryExpression>::Check(expression->GetRightExpression().get(),
                                                       TokenType::MINUS);
     {
-        ASTChecker<NumberExpression>::check(right->getLeftExpression().get(), 4);
-        ASTChecker<NumberExpression>::check(right->getRightExpression().get(), 1);
+        ASTChecker<NumberExpression>::Check(right->GetLeftExpression().get(), 4);
+        ASTChecker<NumberExpression>::Check(right->GetRightExpression().get(), 1);
     }
 }
 
@@ -238,46 +238,46 @@ TEST(ParserTest, nestedIf) {
         {TokenType::FI, "fi", {5, 4}},      {TokenType::FI, "fi", {6, 0}},
         {TokenType::ENDFILE, "EOF", {7, 0}}};
     Parser p(tokens);
-    auto AST = p.parse();
-    EXPECT_EQ(AST.size(), 3);
+    auto ast = p.Parse();
+    EXPECT_EQ(ast.size(), 3);
 
     {  // statement: n=10;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "n");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 10);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "n");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 10);
     }
 
     {  // statement: flag = 0;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "flag");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[1].get(), "flag");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 0);
     }
 
     {  // statement: if-statement
-        auto* statement = ASTChecker<IfStatement>::check(AST[2].get());
+        auto* statement = ASTChecker<IfStatement>::Check(ast[2].get());
 
         {  // condition expression: n>5
-            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+            auto* condition = ASTChecker<BinaryExpression>::Check(statement->GetCondition().get(),
                                                                   TokenType::MORE);
-            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "n");
-            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 5);
+            ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(), "n");
+            ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 5);
         }
 
         {  // body
-            auto const& body = statement->getBody();
+            auto const& body = statement->GetBody();
             EXPECT_EQ(body.size(), 1);
             {  // body statement: if-statement(nested)
-                auto* bodyStatement = ASTChecker<IfStatement>::check(body[0].get());
+                auto* body_statement = ASTChecker<IfStatement>::Check(body[0].get());
                 {  // condition expression: n<15
-                    auto* condition = ASTChecker<BinaryExpression>::check(
-                        bodyStatement->getCondition().get(), TokenType::LESS);
-                    ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(),
+                    auto* condition = ASTChecker<BinaryExpression>::Check(
+                        body_statement->GetCondition().get(), TokenType::LESS);
+                    ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(),
                                                           "n");
-                    ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 15);
+                    ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 15);
                 }
 
                 {  // nested body statement: flag=1;
-                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
-                        bodyStatement->getBody()[0].get(), "flag");
-                    ASTChecker<NumberExpression>::check(nestedbodyStatement->getExpression().get(),
+                    auto* nestedbody_statement = ASTChecker<AssignmentStatement>::Check(
+                        body_statement->GetBody()[0].get(), "flag");
+                    ASTChecker<NumberExpression>::Check(nestedbody_statement->GetExpression().get(),
                                                         1);
                 }
             }
@@ -310,76 +310,76 @@ TEST(ParserTest, nestedWhile) {
         {TokenType::SEMICOL, ";", {8, 9}},    {TokenType::DONE, "done", {9, 0}},
         {TokenType::ENDFILE, "EOF", {10, 0}}};
     Parser p(tokens);
-    auto AST = p.parse();
-    EXPECT_EQ(AST.size(), 3);
+    auto ast = p.Parse();
+    EXPECT_EQ(ast.size(), 3);
 
     {  // statement: a=0;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[0].get(), "a");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[0].get(), "a");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 0);
     }
 
     {  // statement: b=0;
-        auto* statement = ASTChecker<AssignmentStatement>::check(AST[1].get(), "b");
-        ASTChecker<NumberExpression>::check(statement->getExpression().get(), 0);
+        auto* statement = ASTChecker<AssignmentStatement>::Check(ast[1].get(), "b");
+        ASTChecker<NumberExpression>::Check(statement->GetExpression().get(), 0);
     }
 
     {  // statement: while-statement
-        auto* statement = ASTChecker<WhileStatement>::check(AST[2].get());
+        auto* statement = ASTChecker<WhileStatement>::Check(ast[2].get());
         {  // condition expression: a<2
-            auto* condition = ASTChecker<BinaryExpression>::check(statement->getCondition().get(),
+            auto* condition = ASTChecker<BinaryExpression>::Check(statement->GetCondition().get(),
                                                                   TokenType::LESS);
-            ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(), "a");
-            ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 2);
+            ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(), "a");
+            ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 2);
         }
 
         {  // body
-            auto const& body = statement->getBody();
+            auto const& body = statement->GetBody();
             EXPECT_EQ(body.size(), 3);
             {  // body statement: c=0;
-                auto* bodyStatement = ASTChecker<AssignmentStatement>::check(body[0].get(), "c");
-                ASTChecker<NumberExpression>::check(bodyStatement->getExpression().get(), 0);
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[0].get(), "c");
+                ASTChecker<NumberExpression>::Check(body_statement->GetExpression().get(), 0);
             }
 
             {  // body statement: while-statement(nested)
-                auto* bodyStatement = ASTChecker<WhileStatement>::check(body[1].get());
+                auto* body_statement = ASTChecker<WhileStatement>::Check(body[1].get());
                 {  // condition expression: c<3
-                    auto* condition = ASTChecker<BinaryExpression>::check(
-                        bodyStatement->getCondition().get(), TokenType::LESS);
-                    ASTChecker<VariableExpression>::check(condition->getLeftExpression().get(),
+                    auto* condition = ASTChecker<BinaryExpression>::Check(
+                        body_statement->GetCondition().get(), TokenType::LESS);
+                    ASTChecker<VariableExpression>::Check(condition->GetLeftExpression().get(),
                                                           "c");
-                    ASTChecker<NumberExpression>::check(condition->getRightExpression().get(), 3);
+                    ASTChecker<NumberExpression>::Check(condition->GetRightExpression().get(), 3);
                 }
 
                 {  // nested body statement: c=c+1;
-                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
-                        bodyStatement->getBody()[0].get(), "c");
+                    auto* nestedbody_statement = ASTChecker<AssignmentStatement>::Check(
+                        body_statement->GetBody()[0].get(), "c");
 
-                    auto* expression = ASTChecker<BinaryExpression>::check(
-                        nestedbodyStatement->getExpression().get(), TokenType::PLUS);
-                    ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(),
+                    auto* expression = ASTChecker<BinaryExpression>::Check(
+                        nestedbody_statement->GetExpression().get(), TokenType::PLUS);
+                    ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(),
                                                           "c");
-                    ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
+                    ASTChecker<NumberExpression>::Check(expression->GetRightExpression().get(), 1);
                 }
 
                 {  // nested body statement: b=b+1;
-                    auto* nestedbodyStatement = ASTChecker<AssignmentStatement>::check(
-                        bodyStatement->getBody()[1].get(), "b");
+                    auto* nestedbody_statement = ASTChecker<AssignmentStatement>::Check(
+                        body_statement->GetBody()[1].get(), "b");
 
-                    auto* expression = ASTChecker<BinaryExpression>::check(
-                        nestedbodyStatement->getExpression().get(), TokenType::PLUS);
-                    ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(),
+                    auto* expression = ASTChecker<BinaryExpression>::Check(
+                        nestedbody_statement->GetExpression().get(), TokenType::PLUS);
+                    ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(),
                                                           "b");
-                    ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
+                    ASTChecker<NumberExpression>::Check(expression->GetRightExpression().get(), 1);
                 }
             }
 
             {  // body statement: a=a+1;
-                auto* bodyStatement = ASTChecker<AssignmentStatement>::check(body[2].get(), "a");
+                auto* body_statement = ASTChecker<AssignmentStatement>::Check(body[2].get(), "a");
 
-                auto* expression = ASTChecker<BinaryExpression>::check(
-                    bodyStatement->getExpression().get(), TokenType::PLUS);
-                ASTChecker<VariableExpression>::check(expression->getLeftExpression().get(), "a");
-                ASTChecker<NumberExpression>::check(expression->getRightExpression().get(), 1);
+                auto* expression = ASTChecker<BinaryExpression>::Check(
+                    body_statement->GetExpression().get(), TokenType::PLUS);
+                ASTChecker<VariableExpression>::Check(expression->GetLeftExpression().get(), "a");
+                ASTChecker<NumberExpression>::Check(expression->GetRightExpression().get(), 1);
             }
         }
     }

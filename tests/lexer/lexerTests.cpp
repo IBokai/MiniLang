@@ -16,7 +16,7 @@ TEST(LexerTest, basic) {
         {TokenType::VAR, "a", {2, 2}},      {TokenType::PLUS, "+", {2, 3}},
         {TokenType::VAR, "b", {2, 4}},      {TokenType::SEMICOL, ";", {2, 5}},
         {TokenType::ENDFILE, "EOF", {3, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }
 
 TEST(LexerTest, factorial) {
@@ -38,7 +38,7 @@ TEST(LexerTest, factorial) {
         {TokenType::MINUS, "-", {3, 7}},      {TokenType::INT, "1", {3, 8}},
         {TokenType::SEMICOL, ";", {3, 9}},    {TokenType::DONE, "done", {4, 0}},
         {TokenType::ENDFILE, "EOF", {5, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }
 
 TEST(LexerTest, fibonacci) {
@@ -65,7 +65,7 @@ TEST(LexerTest, fibonacci) {
         {TokenType::MINUS, "-", {4, 7}},      {TokenType::INT, "1", {4, 8}},
         {TokenType::SEMICOL, ";", {4, 9}},    {TokenType::DONE, "done", {5, 0}},
         {TokenType::ENDFILE, "EOF", {6, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }
 
 TEST(LexerTest, arithmeticExpression) {
@@ -82,7 +82,7 @@ TEST(LexerTest, arithmeticExpression) {
         {TokenType::INT, "4", {0, 29}},         {TokenType::MINUS, "-", {0, 31}},
         {TokenType::INT, "1", {0, 33}},         {TokenType::RPAREN, ")", {0, 34}},
         {TokenType::SEMICOL, ";", {0, 35}},     {TokenType::ENDFILE, "EOF", {1, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }
 
 TEST(LexerTest, nestedIf) {
@@ -103,7 +103,7 @@ TEST(LexerTest, nestedIf) {
         {TokenType::INT, "1", {4, 13}},     {TokenType::SEMICOL, ";", {4, 14}},
         {TokenType::FI, "fi", {5, 4}},      {TokenType::FI, "fi", {6, 0}},
         {TokenType::ENDFILE, "EOF", {7, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }
 
 TEST(LexerTest, nestedWhile) {
@@ -133,5 +133,5 @@ TEST(LexerTest, nestedWhile) {
         {TokenType::PLUS, "+", {8, 7}},       {TokenType::INT, "1", {8, 8}},
         {TokenType::SEMICOL, ";", {8, 9}},    {TokenType::DONE, "done", {9, 0}},
         {TokenType::ENDFILE, "EOF", {10, 0}}};
-    checkTokenVector(tokens, correct_tokens);
+    CheckTokenVector(tokens, correct_tokens);
 }

@@ -9,7 +9,7 @@ TEST(ParserExceptionTest, noSemicolon) {
         {TokenType::INT, "2", {0, 10}},  {TokenType::ENDFILE, "EOF", {1, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected semicolon after assignment statement");
@@ -23,7 +23,7 @@ TEST(ParserExceptionTest, noStatement) {
                                  {TokenType::ENDFILE, "EOF", {1, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected statement");
@@ -36,7 +36,7 @@ TEST(ParserExceptionTest, noAssign) {
                                  {TokenType::ENDFILE, "EOF", {1, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected assignment sign after variable name");
@@ -55,7 +55,7 @@ TEST(ParserExceptionTest, noThen) {
         {TokenType::FI, "fi", {3, 0}},  {TokenType::ENDFILE, "EOF", {4, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()),
@@ -75,7 +75,7 @@ TEST(ParserExceptionTest, noFi) {
         {TokenType::SEMICOL, ";", {2, 9}},    {TokenType::ENDFILE, "EOF", {3, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected fi keyword before the end of the program");
@@ -94,7 +94,7 @@ TEST(ParserExceptionTest, noDo) {
         {TokenType::DONE, "done", {3, 0}},   {TokenType::ENDFILE, "EOF", {4, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()),
@@ -114,7 +114,7 @@ TEST(ParserExceptionTest, noDone) {
         {TokenType::SEMICOL, ";", {2, 9}},    {TokenType::ENDFILE, "EOF", {3, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected done keyword before the end of the program");
@@ -130,7 +130,7 @@ TEST(ParserExceptionTest, unexpectedToken) {
         {TokenType::ENDFILE, "EOF", {1, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected number, variable or '('");
@@ -146,7 +146,7 @@ TEST(ParserExceptionTest, noClosingParenthesis) {
         {TokenType::SEMICOL, ";", {0, 8}}, {TokenType::ENDFILE, "EOF", {1, 0}}};
     Parser p(tokens);
     try {
-        p.parse();
+        p.Parse();
         FAIL() << "Expected to throw an exception";
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected ')'");
