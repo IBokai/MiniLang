@@ -38,4 +38,20 @@ jobs:
           - name: install clang-format
             run: sudo apt install clang-format
           - name: run clang-format check
-            run: find src/ tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
+            run: |
+              find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
+              find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
+    clang-tidy:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: install clang-tidy
+          run: sudo apt install clang-tidy
+        - name: create build directory
+          run: mkdir build
+        - name: configure cmake
+          run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
+        - name: run clang-tidy
+          run: |
+            find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
+            find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -p build/
