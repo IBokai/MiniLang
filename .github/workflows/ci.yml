@@ -23,3 +23,35 @@ jobs:
         - name: run tests
           working-directory: build
           run: ./tests
+    cppcheck:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: install cppcheck
+            run: sudo apt install cppcheck
+          - name: run cppcheck
+            run: cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/ tests/
+    formatting-check: 
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+          - name: install clang-format
+            run: sudo apt install clang-format
+          - name: run clang-format check
+            run: |
+             find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
+             find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-format --dry-run --Werror
+    clang-tidy:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - name: install clang-tidy
+          run: sudo apt install clang-tidy
+        - name: create build directory
+          run: mkdir build
+        - name: configure cmake
+          run: cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON -B build
+        - name: run clang-tidy
+          run: |
+            find src/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -warnings-as-errors=* -p build/
+            find tests/ \( -name "*.cpp" -o -name "*.h" \) | xargs clang-tidy -warnings-as-errors=* -p build/

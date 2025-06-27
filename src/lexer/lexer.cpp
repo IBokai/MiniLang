@@ -4,107 +4,107 @@
 #include <unordered_map>
 #include <unordered_set>
 
-std::unordered_map<std::string, TokenType> keywordTypes{
-        {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
-        {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
+std::unordered_map<std::string, TokenType> keyword_types{
+    {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
+    {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
 
-std::unordered_map<std::string, TokenType> operatorTypes{
-        {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
-        {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
-        {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
+std::unordered_map<std::string, TokenType> operator_types{
+    {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
+    {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
+    {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
 
 std::vector<Token> Lexer::Tokenize() {
     std::vector<Token> result;
     std::unordered_set<char> operators = {'=', '+', '-', '/', '*', '<', '>', '(', ')'};
-    while (std::getline(file, line)) {
-        while (position != line.length()) {
-            if (isspace(line[position])) {
-                position++;
-                if (position >= line.size()) {
+    while (std::getline(file_, line_)) {
+        while (position_ != line_.length()) {
+            if (isspace(line_[position_])) {
+                position_++;
+                if (position_ >= line_.size()) {
                     break;
                 }
-            } else if (isalpha(line[position])) {
+            } else if (isalpha(line_[position_])) {
                 result.push_back(TokenizeVarOrKeyword());
-                if (position >= line.size()) {
+                if (position_ >= line_.size()) {
                     break;
                 }
-            } else if (isdigit(line[position])) {
+            } else if (isdigit(line_[position_])) {
                 result.push_back(TokenizeNumber());
-                if (position >= line.size()) {
+                if (position_ >= line_.size()) {
                     break;
                 }
-            } else if (line[position] == ';') {
+            } else if (line_[position_] == ';') {
                 result.push_back(TokenizeSemicolon());
-                if (position >= line.size()) {
+                if (position_ >= line_.size()) {
                     break;
                 }
-            } else if (operators.count(line[position])) {
+            } else if (operators.count(line_[position_])) {
                 result.push_back(TokenizeOperator());
-                if (position >= line.size()) {
+                if (position_ >= line_.size()) {
                     break;
                 }
             } else {
                 throw std::runtime_error("Unexpected symbol");
             }
         }
-        position = 0;
-        line_index++;
+        position_ = 0;
+        line_index_++;
     }
-    file.close();
-    result.push_back(Token(TokenType::ENDFILE, "EOF", {line_index, position}));
+    file_.close();
+    result.push_back(Token(TokenType::ENDFILE, "EOF", {line_index_, position_}));
     return result;
 }
 
 Token Lexer::TokenizeNumber() {
-    std::string tokenText;
-    size_t starting_posistion = position;
-    while (isdigit(line[position])) {
-        tokenText += line[position];
-        position++;
+    std::string token_text;
+    size_t starting_posistion = position_;
+    while (isdigit(line_[position_])) {
+        token_text += line_[position_];
+        position_++;
     }
-    if (!isalpha(line[position])) {
-        return {TokenType::INT, tokenText, {line_index, starting_posistion}};
+    if (!isalpha(line_[position_])) {
+        return {TokenType::INT, token_text, {line_index_, starting_posistion}};
     }
     throw std::runtime_error("error tokenizing NUMBER");
 }
 
 Token Lexer::TokenizeVarOrKeyword() {
-    std::string tokenText;
-    size_t starting_position = position;
+    std::string token_text;
+    size_t starting_position = position_;
     std::unordered_set<std::string> keywords = {"if", "fi", "then", "while", "do", "done"};
-    while (isalpha(line[position]) || isdigit(line[position])) {
-        tokenText += line[position];
-        position++;
+    while (isalpha(line_[position_]) || isdigit(line_[position_])) {
+        token_text += line_[position_];
+        position_++;
     }
-    if (keywords.count(tokenText)) {
-        if (!isalpha(line[position] && !isdigit(line[position]))) {
-            return {keywordTypes.at(tokenText), tokenText, {line_index, starting_position}};
+    if (keywords.count(token_text)) {
+        if (!isalpha(line_[position_]) && !isdigit(line_[position_])) {
+            return {keyword_types.at(token_text), token_text, {line_index_, starting_position}};
         } else {
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
     }
-    return {TokenType::VAR, tokenText, {line_index, starting_position}};
+    return {TokenType::VAR, token_text, {line_index_, starting_position}};
 }
 
 Token Lexer::TokenizeSemicolon() {
-    size_t starting_position = position;
-    position++;
-    return {TokenType::SEMICOL, ";", {line_index, starting_position}};
+    size_t starting_position = position_;
+    position_++;
+    return {TokenType::SEMICOL, ";", {line_index_, starting_position}};
 }
 
 Token Lexer::TokenizeOperator() {
-    std::string tokenText;
-    size_t starting_position = position;
-    tokenText += line[position];
-    position++;
-    return {operatorTypes.at(tokenText), tokenText, {line_index, starting_position}};
+    std::string token_text;
+    size_t starting_position = position_;
+    token_text += line_[position_];
+    position_++;
+    return {operator_types.at(token_text), token_text, {line_index_, starting_position}};
 }
 
 Lexer::Lexer(std::string const& filename) {
-    file.open(filename);
-    if (!file) {
+    file_.open(filename);
+    if (!file_) {
         throw std::runtime_error("Error, while processing file");
     }
-    position = 0;
-    line_index = 0;
+    position_ = 0;
+    line_index_ = 0;
 }

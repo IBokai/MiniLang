@@ -1,51 +1,51 @@
 #include "parser.h"
 
-std::unique_ptr<Expression> Parser::parseExpression() { return parseBinaryExpression(0); }
+std::unique_ptr<Expression> Parser::ParseExpression() { return ParseBinaryExpression(0); }
 
-std::unique_ptr<Expression> Parser::parseBinaryExpression(int minPrecedence) {
-    auto left = parseUnaryExpression();
+std::unique_ptr<Expression> Parser::ParseBinaryExpression(int minPrecedence) {
+    auto left = ParseUnaryExpression();
     while (true) {
-        Token op = current_token;
-        if (!isBinaryOP()) {
+        Token op = current_token_;
+        if (!IsBinaryOp()) {
             break;
         }
-        int const precedence = getPrecedence(op);
+        int const precedence = GetPrecedence(op);
         if (precedence < minPrecedence) {
             break;
         }
-        advance();
-        auto right = parseBinaryExpression(precedence + 1);
+        Advance();
+        auto right = ParseBinaryExpression(precedence + 1);
         left = std::make_unique<BinaryExpression>(std::move(left), op.type_, std::move(right));
     }
     return left;
 }
 
-std::unique_ptr<Expression> Parser::parseUnaryExpression() {
-    if (current_token.type_ == TokenType::MINUS) {
-        advance();
-        return std::make_unique<UnaryExpression>(parsePrimaryExpression(), true);
+std::unique_ptr<Expression> Parser::ParseUnaryExpression() {
+    if (current_token_.type_ == TokenType::MINUS) {
+        Advance();
+        return std::make_unique<UnaryExpression>(ParsePrimaryExpression(), true);
     }
-    return parsePrimaryExpression();
+    return ParsePrimaryExpression();
 }
 
-std::unique_ptr<Expression> Parser::parsePrimaryExpression() {
-    if (current_token.type_ == TokenType::LPAREN) {
-        advance();
-        auto inner_expression = parseExpression();
-        if (current_token.type_ != TokenType::RPAREN) {
+std::unique_ptr<Expression> Parser::ParsePrimaryExpression() {
+    if (current_token_.type_ == TokenType::LPAREN) {
+        Advance();
+        auto inner_expression = ParseExpression();
+        if (current_token_.type_ != TokenType::RPAREN) {
             throw std::runtime_error("Expected ')'");
         }
-        advance();
+        Advance();
         return inner_expression;
     }
-    if (current_token.type_ == TokenType::INT) {
-        auto result = std::make_unique<NumberExpression>(std::stoi(current_token.text_));
-        advance();
+    if (current_token_.type_ == TokenType::INT) {
+        auto result = std::make_unique<NumberExpression>(std::stoi(current_token_.text_));
+        Advance();
         return result;
     }
-    if (current_token.type_ == TokenType::VAR) {
-        auto result = std::make_unique<VariableExpression>(current_token.text_);
-        advance();
+    if (current_token_.type_ == TokenType::VAR) {
+        auto result = std::make_unique<VariableExpression>(current_token_.text_);
+        Advance();
         return result;
     }
     throw std::runtime_error("Expected number, variable or '('");

@@ -4,10 +4,10 @@
 
 #include "../AST/ASTNode.h"
 
-std::vector<std::unique_ptr<ASTNode>> Parser::parse() {
-    std::vector<std::unique_ptr<ASTNode>> AST;
-    while (current_token.type_ != TokenType::ENDFILE) {
-        AST.push_back(parseStatement());
+std::vector<std::unique_ptr<ASTNode>> Parser::Parse() {
+    std::vector<std::unique_ptr<ASTNode>> ast;
+    while (current_token_.type_ != TokenType::ENDFILE) {
+        ast.push_back(ParseStatement());
     }
-    return AST;
+    return ast;
 }
