@@ -26,7 +26,8 @@ private:
 
     [[nodiscard]] bool IsBinaryOp() const noexcept {
         return current_token_.type_ == TokenType::LESS || current_token_.type_ == TokenType::MORE ||
-               current_token_.type_ == TokenType::PLUS || current_token_.type_ == TokenType::MINUS ||
+               current_token_.type_ == TokenType::PLUS ||
+               current_token_.type_ == TokenType::MINUS ||
                current_token_.type_ == TokenType::MULTIPLY ||
                current_token_.type_ == TokenType::DIVIDE;
     }
