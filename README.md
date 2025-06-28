@@ -1,5 +1,2 @@
 # MiniLang
-Tiny compiler of a simple programming language to RISC-V assembly code
-
-# Note 
-MiniLang is a temporary name
+A compiler for a simple programming language that translates source code into C or RISC-V assembly
