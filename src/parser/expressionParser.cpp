@@ -15,7 +15,7 @@ std::unique_ptr<Expression> Parser::ParseBinaryExpression(int minPrecedence) {
         }
         Advance();
         auto right = ParseBinaryExpression(precedence + 1);
-        left = std::make_unique<BinaryExpression>(std::move(left), op.type_, std::move(right));
+        left = std::make_unique<BinaryExpression>(std::move(left), op, std::move(right));
     }
     return left;
 }
