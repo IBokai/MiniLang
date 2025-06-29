@@ -3,32 +3,6 @@
 
 #include "ASTNode.h"
 
-inline std::string OPtostring(TokenType type) {
-    switch (type) {
-        case TokenType::PLUS:
-            return "+";
-            break;
-        case TokenType::MINUS:
-            return "-";
-            break;
-        case TokenType::MULTIPLY:
-            return "*";
-            break;
-        case TokenType::DIVIDE:
-            return "/";
-            break;
-        case TokenType::LESS:
-            return "<";
-            break;
-        case TokenType::MORE:
-            return ">";
-            break;
-        default:
-            break;
-    }
-    return "";
-}
-
 class Expression : public ASTNode {
 public:
 private:
@@ -82,7 +56,7 @@ private:
     std::unique_ptr<Expression> right_;
 
     std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        return "(" + left_->GetCode(table, config) + " " + OPtostring(op_) + " " +
+        return "(" + left_->GetCode(table, config) + " " + op_.text_ + " " +
                right_->GetCode(table, config) + ")";
     }
 };
