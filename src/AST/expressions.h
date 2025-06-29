@@ -3,7 +3,37 @@
 
 #include "ASTNode.h"
 
-class Expression : public ASTNode {};
+inline std::string OPtostring(TokenType type) {
+    switch (type) {
+        case TokenType::PLUS:
+            return "+";
+            break;
+        case TokenType::MINUS:
+            return "-";
+            break;
+        case TokenType::MULTIPLY:
+            return "*";
+            break;
+        case TokenType::DIVIDE:
+            return "/";
+            break;
+        case TokenType::LESS:
+            return "<";
+            break;
+        case TokenType::MORE:
+            return ">";
+            break;
+        default:
+            break;
+    }
+    return "";
+}
+
+class Expression : public ASTNode {
+public:
+private:
+    std::string GetC(SymbolTable& symbol_table, CompilerConfig& config) override = 0;
+};
 
 class NumberExpression final : public Expression {
 public:
@@ -12,6 +42,10 @@ public:
     int const& GetValue() const { return value_; }
 
 private:
+    std::string GetC([[maybe_unused]] SymbolTable& table,
+                     [[maybe_unused]] CompilerConfig& config) override {
+        return std::to_string(value_);
+    }
     int value_;
 };
 
@@ -22,6 +56,13 @@ public:
     std::string const& GetName() const { return name_; }
 
 private:
+    std::string GetC(SymbolTable& table, [[maybe_unused]] CompilerConfig& config) override {
+        if (table.CheckSymbol(name_)) {
+            return name_;
+        }
+        throw std::runtime_error(
+            "Error while variable expression, no variable with such name declared");
+    }
     std::string name_;
 };
 
@@ -39,6 +80,11 @@ private:
     std::unique_ptr<Expression> left_;
     Token op_;
     std::unique_ptr<Expression> right_;
+
+    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
+        return "(" + left_->GetCode(table, config) + " " + OPtostring(op_) + " " +
+               right_->GetCode(table, config) + ")";
+    }
 };
 
 class UnaryExpression : public Expression {
@@ -52,5 +98,12 @@ public:
 private:
     std::unique_ptr<Expression> expression_;
     bool negative_;
+
+    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
+        if (negative_) {
+            return "-" + expression_->GetCode(table, config);
+        }
+        return expression_->GetCode(table, config);
+    };
 };
 #endif
