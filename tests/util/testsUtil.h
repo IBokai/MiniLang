@@ -64,7 +64,7 @@ struct ASTChecker<BinaryExpression> {
             ADD_FAILURE() << "Expected Binary expression '" << typeid(BinaryExpression).name()
                           << "', got " << typeid(*node).name();
         }
-        EXPECT_EQ(casted->GetOP(), OPtype);
+        EXPECT_EQ(casted->GetOP().type_, OPtype);
         return casted;
     }
 };

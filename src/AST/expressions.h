@@ -27,17 +27,17 @@ private:
 
 class BinaryExpression final : public Expression {
 public:
-    explicit BinaryExpression(std::unique_ptr<Expression> left, TokenType op,
+    explicit BinaryExpression(std::unique_ptr<Expression> left, Token op,
                               std::unique_ptr<Expression> right)
-        : left_(std::move(left)), op_(op), right_(std::move(right)) {}
+        : left_(std::move(left)), op_(std::move(op)), right_(std::move(right)) {}
 
     std::unique_ptr<Expression> const& GetLeftExpression() const { return left_; }
     std::unique_ptr<Expression> const& GetRightExpression() const { return right_; }
-    TokenType const& GetOP() const { return op_; }
+    Token const& GetOP() const { return op_; }
 
 private:
     std::unique_ptr<Expression> left_;
-    TokenType op_;
+    Token op_;
     std::unique_ptr<Expression> right_;
 };
 
