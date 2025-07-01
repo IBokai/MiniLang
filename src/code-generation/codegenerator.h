@@ -39,11 +39,15 @@ private:
     }
 
     std::string GenerateRisc(std::vector<std::unique_ptr<ASTNode>> const& ast) {
-        std::string code = "";
+        std::string code = ".text\n.globl main\nmain:\n";
+
+        FormattingConfig formatting_config = FormattingConfig();
         SymbolTable table = SymbolTable();
         RegisterAllocator allocator = RegisterAllocator();
+
+        formatting_config.AdvanceIndent();
         for (auto const& node : ast) {
-            code += node->GetRisc(table, allocator).code;
+            code += node->GetRisc(table, allocator, formatting_config).code;
         }
         return code;
     }

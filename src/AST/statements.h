@@ -7,7 +7,8 @@
 class Statement : public ASTNode {
 public:
     std::string GetC(SymbolTable& symbol_table, FormattingConfig& config) override = 0;
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override = 0;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
+                              FormattingConfig& formatting_config) override = 0;
 };
 
 class AssignmentStatement final : public Statement {
@@ -20,7 +21,8 @@ public:
 
     std::string GetC(SymbolTable& table, FormattingConfig& config) override;
 
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
+                              FormattingConfig& formatting_config) override;
 
 private:
     std::string name_;
@@ -38,7 +40,8 @@ public:
 
     std::string GetC(SymbolTable& table, FormattingConfig& config) override;
 
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
+                              FormattingConfig& formatting_config) override;
 
 private:
     std::unique_ptr<Expression> condition_;
@@ -56,7 +59,8 @@ public:
 
     std::string GetC(SymbolTable& table, FormattingConfig& config) override;
 
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
+                              FormattingConfig& formatting_config) override;
 
 private:
     std::unique_ptr<Expression> condition_;

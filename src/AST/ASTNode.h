@@ -19,7 +19,8 @@ struct RiscCodegenOutput {
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
-    virtual std::string GetC(SymbolTable& table, FormattingConfig& config) = 0;
-    virtual RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) = 0;
+    virtual std::string GetC(SymbolTable& table, FormattingConfig& formatting_config) = 0;
+    virtual RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
+                                      FormattingConfig& formatting_config) = 0;
 };
 #endif
