@@ -14,7 +14,5 @@ int main(int argc, char* argv[]) {
     CompilerConfig config(Language::RISC);
     Compiler compiler = Compiler(config);
     compiler.Compile(input, "../temporary-output/output.txt");
-    int expression = (5 + 3 * 2) / (4 - 1);
-    std::cout << expression << '\n';
     return 0;
 }
