@@ -8,11 +8,12 @@
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "util/processinput.h"
+#include "cli-parser/CLIParser.h"
 
 int main(int argc, char* argv[]) {
-    std::string const input = ProcessInput(argv, argc);
-    CompilerConfig config(Language::RISC);
+    CLIParser cli_parser = CLIParser();
+    auto [input, output, config] = cli_parser.Parse(argv, argc);
     Compiler compiler = Compiler(config);
-    compiler.Compile(input, "../temporary-output/output.txt");
+    compiler.Compile(input, output);
     return 0;
 }
