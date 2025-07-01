@@ -8,7 +8,6 @@
 #include "configs/configs.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
-#include "util/processinput.h"
 
 int main(int argc, char* argv[]) {
     CLIParser cli_parser = CLIParser();
