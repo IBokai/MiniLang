@@ -19,6 +19,8 @@ add_executable(main
     src/parser/parser.cpp
     src/parser/expressionParser.cpp
     src/parser/statementParser.cpp
+    src/AST/expressions-codegenerators.cpp
+    src/AST/statements-codegenerators.cpp
 )
 
 add_executable(tests
@@ -30,6 +32,8 @@ add_executable(tests
     src/parser/parser.cpp
     src/parser/expressionParser.cpp
     src/parser/statementParser.cpp 
+    src/AST/expressions-codegenerators.cpp
+    src/AST/statements-codegenerators.cpp
 )
 
 target_link_libraries(tests

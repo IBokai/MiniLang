@@ -6,13 +6,18 @@ class Compiler {
 public:
     explicit Compiler(CompilerConfig& config) : config_(config){};
 
-    std::string Compile(std::string input_path) {
-        Lexer lexer = Lexer(std::move(input_path));
+    void Compile(std::string const& input_path, std::string const& output_path) {
+        Lexer lexer(input_path);
         auto tokens = lexer.Tokenize();
-        Parser parser = Parser(std::move(tokens));
+        Parser parser(std::move(tokens));
         auto ast = parser.Parse();
         CodeGenerator generator = CodeGenerator(config_);
-        return generator.Generate(ast);
+        std::string code = generator.Generate(ast);
+        std::ofstream output(output_path);
+        if (!output) {
+            throw std::runtime_error("Failed to open output file");
+        }
+        output << code;
     }
 
 private:

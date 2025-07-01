@@ -6,27 +6,20 @@
 #include <string>
 #include <vector>
 
+#include "../code-generation/register-allocator.h"
 #include "../code-generation/symboltable.h"
-#include "../config/config.h"
+#include "../configs/configs.h"
 #include "../token/token.h"
+
+struct RiscCodegenOutput {
+    std::string code;
+    std::optional<std::string> reg;
+};
 
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
-    virtual std::string GetCode(SymbolTable& table, CompilerConfig& config) {
-        switch (config.GetLanguage()) {
-            case Language::C:
-                return this->GetC(table, config);
-                break;
-            case Language::RISC:
-                return "";
-            default:
-                break;
-        }
-        return "";
-    };
-
-private:
-    virtual std::string GetC(SymbolTable& table, CompilerConfig& config) = 0;
+    virtual std::string GetC(SymbolTable& table, FormattingConfig& config) = 0;
+    virtual RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) = 0;
 };
 #endif

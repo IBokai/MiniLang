@@ -5,8 +5,9 @@
 #include "expressions.h"
 
 class Statement : public ASTNode {
-private:
-    std::string GetC(SymbolTable& symbol_table, CompilerConfig& config) override = 0;
+public:
+    std::string GetC(SymbolTable& symbol_table, FormattingConfig& config) override = 0;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override = 0;
 };
 
 class AssignmentStatement final : public Statement {
@@ -17,24 +18,13 @@ public:
     std::unique_ptr<Expression> const& GetExpression() const { return expression_; }
     std::string const& GetName() const { return name_; }
 
+    std::string GetC(SymbolTable& table, FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
     std::string name_;
     std::unique_ptr<Expression> expression_;
-
-    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        if (!table.CheckSymbol(name_)) {
-            std::string result = config.GetIndent() + "int " + name_ + " = ";
-            result += expression_->GetCode(table, config);
-            result += ";";
-            table.AddSymbol(name_);
-            return result;
-        } else {
-            std::string result = config.GetIndent() + name_ + " = ";
-            result += expression_->GetCode(table, config);
-            result += ";";
-            return result;
-        }
-    };
 };
 
 class IfStatement final : public Statement {
@@ -46,22 +36,13 @@ public:
     std::unique_ptr<Expression> const& GetCondition() const { return condition_; }
     std::vector<std::unique_ptr<Statement>> const& GetBody() const { return body_; }
 
+    std::string GetC(SymbolTable& table, FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
     std::unique_ptr<Expression> condition_;
     std::vector<std::unique_ptr<Statement>> body_;
-
-    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        std::string code =
-            config.GetIndent() + "if (" + condition_->GetCode(table, config) + ") {\n";
-        config.AdvanceIndent();
-        SymbolTable local_table = table;
-        for (auto const& body_statement : body_) {
-            code += body_statement->GetCode(local_table, config) + "\n";
-        }
-        config.DecreaseIndent();
-        code += config.GetIndent() + "}";
-        return code;
-    }
 };
 
 class WhileStatement final : public Statement {
@@ -73,22 +54,13 @@ public:
     std::unique_ptr<Expression> const& GetCondition() const { return condition_; }
     std::vector<std::unique_ptr<Statement>> const& GetBody() const { return body_; }
 
+    std::string GetC(SymbolTable& table, FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
     std::unique_ptr<Expression> condition_;
     std::vector<std::unique_ptr<Statement>> body_;
-
-    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        std::string code =
-            config.GetIndent() + "while (" + condition_->GetCode(table, config) + ") {\n";
-        config.AdvanceIndent();
-        SymbolTable local_table = table;
-        for (auto const& body_statement : body_) {
-            code += body_statement->GetCode(local_table, config) + "\n";
-        }
-        config.DecreaseIndent();
-        code += config.GetIndent() + "}";
-        return code;
-    }
 };
 
 #endif

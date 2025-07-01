@@ -5,8 +5,8 @@
 
 class Expression : public ASTNode {
 public:
-private:
-    std::string GetC(SymbolTable& symbol_table, CompilerConfig& config) override = 0;
+    std::string GetC(SymbolTable& symbol_table, FormattingConfig& config) override = 0;
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override = 0;
 };
 
 class NumberExpression final : public Expression {
@@ -15,11 +15,13 @@ public:
 
     int const& GetValue() const { return value_; }
 
-private:
     std::string GetC([[maybe_unused]] SymbolTable& table,
-                     [[maybe_unused]] CompilerConfig& config) override {
-        return std::to_string(value_);
-    }
+                     [[maybe_unused]] FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc([[maybe_unused]] SymbolTable& table,
+                              RegisterAllocator& allocator) override;
+
+private:
     int value_;
 };
 
@@ -29,14 +31,11 @@ public:
 
     std::string const& GetName() const { return name_; }
 
+    std::string GetC(SymbolTable& table, [[maybe_unused]] FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
-    std::string GetC(SymbolTable& table, [[maybe_unused]] CompilerConfig& config) override {
-        if (table.CheckSymbol(name_)) {
-            return name_;
-        }
-        throw std::runtime_error(
-            "Error while variable expression, no variable with such name declared");
-    }
     std::string name_;
 };
 
@@ -50,15 +49,14 @@ public:
     std::unique_ptr<Expression> const& GetRightExpression() const { return right_; }
     Token const& GetOP() const { return op_; }
 
+    std::string GetC(SymbolTable& table, FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
     std::unique_ptr<Expression> left_;
     Token op_;
     std::unique_ptr<Expression> right_;
-
-    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        return "(" + left_->GetCode(table, config) + " " + op_.text_ + " " +
-               right_->GetCode(table, config) + ")";
-    }
 };
 
 class UnaryExpression : public Expression {
@@ -69,15 +67,12 @@ public:
     std::unique_ptr<Expression> const& GetExpression() const { return expression_; }
     bool IsNegative() const { return negative_; }
 
+    std::string GetC(SymbolTable& table, FormattingConfig& config) override;
+
+    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator) override;
+
 private:
     std::unique_ptr<Expression> expression_;
     bool negative_;
-
-    std::string GetC(SymbolTable& table, CompilerConfig& config) override {
-        if (negative_) {
-            return "-" + expression_->GetCode(table, config);
-        }
-        return expression_->GetCode(table, config);
-    };
 };
 #endif

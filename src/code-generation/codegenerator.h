@@ -8,17 +8,43 @@ class CodeGenerator {
 public:
     explicit CodeGenerator(CompilerConfig& config) : config_(config) {}
     std::string Generate(std::vector<std::unique_ptr<ASTNode>> const& ast) {
-        std::string code = config_.GetIndent() + "int main() {\n";
+        switch (config_.GetLanguage()) {
+            case Language::C:
+                return this->GenerateC(ast);
+                break;
+            case Language::RISC:
+                return this->GenerateRisc(ast);
+                break;
+            default:
+                break;
+        }
+        throw std::runtime_error("Unknown language");
+    }
+
+private:
+    CompilerConfig config_;
+    std::string GenerateC(std::vector<std::unique_ptr<ASTNode>> const& ast) {
+        std::string code = "int main() {\n";
+
+        FormattingConfig formatting_config = FormattingConfig();
         SymbolTable table = SymbolTable();
-        config_.AdvanceIndent();
+
+        formatting_config.AdvanceIndent();
         for (auto const& node : ast) {
-            code += node->GetCode(table, config_);
+            code += node->GetC(table, formatting_config);
             code += '\n';
         }
         code += "}";
         return code;
     }
 
-private:
-    CompilerConfig config_;
+    std::string GenerateRisc(std::vector<std::unique_ptr<ASTNode>> const& ast) {
+        std::string code = "";
+        SymbolTable table = SymbolTable();
+        RegisterAllocator allocator = RegisterAllocator();
+        for (auto const& node : ast) {
+            code += node->GetRisc(table, allocator).code;
+        }
+        return code;
+    }
 };

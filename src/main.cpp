@@ -4,18 +4,17 @@
 
 #include "code-generation/codegenerator.h"
 #include "compiler/compiler.h"
-#include "config/config.h"
+#include "configs/configs.h"
 #include "lexer/lexer.h"
 #include "parser/parser.h"
 #include "util/processinput.h"
 
 int main(int argc, char* argv[]) {
     std::string const input = ProcessInput(argv, argc);
-    CompilerConfig config(Language::C);
+    CompilerConfig config(Language::RISC);
     Compiler compiler = Compiler(config);
-    std::ofstream output("../temporary-output/output.c");
-    output.clear();
-    std::string code = compiler.Compile(input);
-    output << code;
+    compiler.Compile(input, "../temporary-output/output.txt");
+    int expression = (5 + 3 * 2) / (4 - 1);
+    std::cout << expression << '\n';
     return 0;
 }
