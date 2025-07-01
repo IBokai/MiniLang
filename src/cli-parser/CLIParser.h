@@ -28,7 +28,7 @@ public:
         if (!CheckOption(argv[3], std::regex("^(C|RISC-V)$"))) {
             throw std::runtime_error("Expected C|RISC-V as third argument");
         }
-        if(argv[3] == std::string("C")){
+        if (argv[3] == std::string("C")) {
             return {argv[1], argv[2], CompilerConfig(Language::C)};
         }
         return {argv[1], argv[2], CompilerConfig(Language::RISC)};
