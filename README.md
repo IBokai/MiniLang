@@ -27,6 +27,8 @@ On Ubuntu:
 sudo apt install build-essential cmake qemu-user binutils-riscv64-linux-gnu
 ```
 
+---
+
 ## Building the Project
 - Clone the repository
 ```bash
