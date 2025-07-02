@@ -13,7 +13,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_compile_options(-O3 -Wall -Wextra -Wpedantic -Werror)
 
-add_executable(main
+add_executable(compiler
     src/main.cpp
     src/lexer/lexer.cpp
     src/parser/parser.cpp
