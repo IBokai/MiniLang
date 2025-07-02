@@ -26,7 +26,7 @@ RiscCodegenOutput AssignmentStatement::GetRisc(SymbolTable& table, RegisterAlloc
         expression_->GetRisc(table, allocator, formatting_config);
     code += expression_codegen.code;
 
-    code += formatting_config.GetIndent() + "sw " + expression_codegen.reg.value() + " " +
+    code += formatting_config.GetIndent() + "sw " + expression_codegen.reg.value() + ", " +
             table.GetOffset(name_) + "\n";
     allocator.Reset();
     table.ResetSpill();
@@ -53,7 +53,7 @@ RiscCodegenOutput IfStatement::GetRisc(SymbolTable& table, RegisterAllocator& al
     auto condition_codegen = condition_->GetRisc(table, allocator, formatting_config);
     code += condition_codegen.code;
     std::string reg = condition_codegen.reg.value();
-    code += formatting_config.GetIndent() + "beqz " + reg + " " + "skip_if" + if_mark + "\n";
+    code += formatting_config.GetIndent() + "beqz " + reg + ", " + "skip_if" + if_mark + "\n";
     allocator.Free(reg);
     SymbolTable local_table = table;
     for (auto const& body_statement : body_) {
@@ -83,7 +83,7 @@ RiscCodegenOutput WhileStatement::GetRisc(SymbolTable& table, RegisterAllocator&
     auto condition_codegen = condition_->GetRisc(table, allocator, formatting_config);
     code += condition_codegen.code;
     std::string reg = condition_codegen.reg.value();
-    code += formatting_config.GetIndent() + "beqz " + reg + " while_end" + while_mark + "\n";
+    code += formatting_config.GetIndent() + "beqz " + reg + ", while_end" + while_mark + "\n";
     allocator.Free(reg);
     SymbolTable local_table = table;
     for (auto const& body_statement : body_) {

@@ -10,7 +10,7 @@ RiscCodegenOutput NumberExpression::GetRisc([[maybe_unused]] SymbolTable& table,
                                             FormattingConfig& formatting_config) {
     std::string code = formatting_config.GetIndent() + "li ";
     std::string reg = allocator.Allocate().value();
-    code += reg + " " + std::to_string(value_) + "\n";
+    code += reg + ", " + std::to_string(value_) + "\n";
     return {code, reg};
 }
 
@@ -28,7 +28,7 @@ RiscCodegenOutput VariableExpression::GetRisc(SymbolTable& table, RegisterAlloca
     if (table.CheckSymbol(name_)) {
         std::string code = formatting_config.GetIndent() + "lw ";
         std::string reg = allocator.Allocate().value();
-        code += reg + " " + table.GetOffset(name_) + "\n";
+        code += reg + ", " + table.GetOffset(name_) + "\n";
         return {code, reg};
     }
     throw std::runtime_error(
@@ -47,7 +47,7 @@ RiscCodegenOutput BinaryExpression::GetRisc(SymbolTable& table, RegisterAllocato
     code += left_expreesion_codegen.code;
     std::string left_reg = left_expreesion_codegen.reg.value();
     std::string spill_reg = table.Spill();
-    code += formatting_config.GetIndent() + "sw " + left_reg + " " + spill_reg + "\n";
+    code += formatting_config.GetIndent() + "sw " + left_reg + ", " + spill_reg + "\n";
     allocator.Free(left_reg);
     auto right_expreesion_codegen = right_->GetRisc(table, allocator, formatting_config);
     code += right_expreesion_codegen.code;
@@ -55,38 +55,38 @@ RiscCodegenOutput BinaryExpression::GetRisc(SymbolTable& table, RegisterAllocato
     switch (op_.type_) {
         case TokenType::PLUS:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "add " + left_reg + " " + left_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "add " + left_reg + ", " + left_reg + ", " +
                     right_reg + "\n";
             break;
         case TokenType::MINUS:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "sub " + left_reg + " " + left_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "sub " + left_reg + ", " + left_reg + ", " +
                     right_reg + "\n";
             break;
         case TokenType::MULTIPLY:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "mul " + left_reg + " " + left_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "mul " + left_reg + ", " + left_reg + ", " +
                     right_reg + "\n";
             break;
         case TokenType::DIVIDE:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "div " + left_reg + " " + left_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "div " + left_reg + ", " + left_reg + ", " +
                     right_reg + "\n";
             break;
         case TokenType::LESS:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "slt " + left_reg + " " + left_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "slt " + left_reg + ", " + left_reg + ", " +
                     right_reg + "\n";
             break;
         case TokenType::MORE:
             left_reg = allocator.Allocate().value();
-            code += formatting_config.GetIndent() + "lw " + left_reg + " " + spill_reg + "\n";
-            code += formatting_config.GetIndent() + "slt " + left_reg + " " + right_reg + " " +
+            code += formatting_config.GetIndent() + "lw " + left_reg + ", " + spill_reg + "\n";
+            code += formatting_config.GetIndent() + "slt " + left_reg + ", " + right_reg + ", " +
                     left_reg + "\n";
             break;
         default:
@@ -108,7 +108,7 @@ RiscCodegenOutput UnaryExpression::GetRisc(SymbolTable& table, RegisterAllocator
     std::string code = "";
     auto expression_codegen = expression_->GetRisc(table, allocator, formatting_config);
     code = expression_codegen.code;
-    code += formatting_config.GetIndent() + "neg " + expression_codegen.reg.value() + " " +
+    code += formatting_config.GetIndent() + "neg " + expression_codegen.reg.value() + ", " +
             expression_codegen.reg.value() + "\n";
     return {code, expression_codegen.reg.value()};
 }
