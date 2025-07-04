@@ -30,16 +30,16 @@ sudo apt install build-essential cmake qemu-user binutils-riscv64-linux-gnu
 ---
 
 ## Building the Project
-- Clone the repository
+1) Clone the repository
 ```bash
 git clone https://github.com/IBokai/Minilang.git 
 ```
-- Change directory
+2) Change directory
 ```bash
 cd Minilang/
 ```
 
-- Run build script
+3) Run build script
 ```bash
 ./build.sh
 ```
@@ -47,11 +47,11 @@ cd Minilang/
 ---
 
 ## Usage
-- After building the project, change directory to build
+1) After building the project, change directory to build
 ```bash
 cd build/
 ```
-- Run the compiler
+2) Run the compiler
 ```bash
 ./main <input_path> <output_path> <(default: RISC-V) language(C|RISC-V)>
 ```
@@ -78,7 +78,7 @@ qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64 ./file.exe
 ---
 
 ## Code Samples
-You can find various code samples in the corresponding [folder](samples/) of the projec repository
+You can find various code samples in the corresponding [folder](samples/) of the project repository
 
 ---
 
