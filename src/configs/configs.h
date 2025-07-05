@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CONFIGS_H
+#define CONFIGS_H
 
 #include <string>
 
@@ -27,3 +28,4 @@ private:
     size_t indent_size_;
 };
 }  // namespace compiler::configs
+#endif
