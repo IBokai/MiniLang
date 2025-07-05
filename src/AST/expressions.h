@@ -5,7 +5,8 @@
 namespace compiler::ast {
 class Expression : public ASTNode {
 public:
-    std::string GetC(SymbolTable& symbol_table, configs::FormattingConfig& formatting_config) override = 0;
+    std::string GetC(SymbolTable& symbol_table,
+                     configs::FormattingConfig& formatting_config) override = 0;
     RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
                               configs::FormattingConfig&) override = 0;
 };
