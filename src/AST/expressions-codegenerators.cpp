@@ -15,8 +15,8 @@ RiscCodegenOutput NumberExpression::GetRisc([[maybe_unused]] SymbolTable& table,
     return {code, reg};
 }
 
-std::string VariableExpression::GetC(SymbolTable& table,
-                                     [[maybe_unused]] configs::FormattingConfig& formatting_config) {
+std::string VariableExpression::GetC(
+    SymbolTable& table, [[maybe_unused]] configs::FormattingConfig& formatting_config) {
     if (table.CheckSymbol(name_)) {
         return name_;
     }
@@ -36,7 +36,8 @@ RiscCodegenOutput VariableExpression::GetRisc(SymbolTable& table, RegisterAlloca
         "Error while compiling variable expression, no variable with such name declared");
 }
 
-std::string BinaryExpression::GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) {
+std::string BinaryExpression::GetC(SymbolTable& table,
+                                   configs::FormattingConfig& formatting_config) {
     return "(" + left_->GetC(table, formatting_config) + " " + op_.text_ + " " +
            right_->GetC(table, formatting_config) + ")";
 }
@@ -97,7 +98,8 @@ RiscCodegenOutput BinaryExpression::GetRisc(SymbolTable& table, RegisterAllocato
     return {code, left_reg};
 }
 
-std::string UnaryExpression::GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) {
+std::string UnaryExpression::GetC(SymbolTable& table,
+                                  configs::FormattingConfig& formatting_config) {
     if (negative_) {
         return "-" + expression_->GetC(table, formatting_config);
     }
