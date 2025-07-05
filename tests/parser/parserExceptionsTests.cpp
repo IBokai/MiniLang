@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "../../src/parser/parser.h"
-
+namespace tests::parsertests{
+using namespace compiler::parser;
 TEST(ParserExceptionTest, noSemicolon) {
     std::vector<Token> tokens = {
         {TokenType::VAR, "num", {0, 0}}, {TokenType::ASSIGNMENT, "=", {0, 4}},
@@ -151,4 +152,5 @@ TEST(ParserExceptionTest, noClosingParenthesis) {
     } catch (const std::exception& e) {
         EXPECT_EQ(std::string(e.what()), "Expected ')'");
     }
+}
 }

@@ -1,9 +1,9 @@
 #include "statements.h"
-
+namespace compiler::ast {
 static int if_counter = 0;
 static int while_counter = 0;
 
-std::string AssignmentStatement::GetC(SymbolTable& table, FormattingConfig& config) {
+std::string AssignmentStatement::GetC(SymbolTable& table, configs::FormattingConfig& config) {
     if (!table.CheckSymbol(name_)) {
         std::string result = config.GetIndent() + "int " + name_ + " = ";
         result += expression_->GetC(table, config);
@@ -19,7 +19,7 @@ std::string AssignmentStatement::GetC(SymbolTable& table, FormattingConfig& conf
 }
 
 RiscCodegenOutput AssignmentStatement::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                               FormattingConfig& formatting_config) {
+                                               configs::FormattingConfig& formatting_config) {
     std::string code = "";
     table.AddSymbol(name_);
     RiscCodegenOutput expression_codegen =
@@ -33,7 +33,7 @@ RiscCodegenOutput AssignmentStatement::GetRisc(SymbolTable& table, RegisterAlloc
     return {code, std::nullopt};
 }
 
-std::string IfStatement::GetC(SymbolTable& table, FormattingConfig& config) {
+std::string IfStatement::GetC(SymbolTable& table, configs::FormattingConfig& config) {
     std::string code = config.GetIndent() + "if (" + condition_->GetC(table, config) + ") {\n";
     config.AdvanceIndent();
     SymbolTable local_table = table;
@@ -46,7 +46,7 @@ std::string IfStatement::GetC(SymbolTable& table, FormattingConfig& config) {
 }
 
 RiscCodegenOutput IfStatement::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                       FormattingConfig& formatting_config) {
+                                       configs::FormattingConfig& formatting_config) {
     if_counter++;
     std::string if_mark = std::to_string(if_counter);
     std::string code = "";
@@ -63,7 +63,7 @@ RiscCodegenOutput IfStatement::GetRisc(SymbolTable& table, RegisterAllocator& al
     return {code, std::nullopt};
 }
 
-std::string WhileStatement::GetC(SymbolTable& table, FormattingConfig& config) {
+std::string WhileStatement::GetC(SymbolTable& table, configs::FormattingConfig& config) {
     std::string code = config.GetIndent() + "while (" + condition_->GetC(table, config) + ") {\n";
     config.AdvanceIndent();
     SymbolTable local_table = table;
@@ -76,7 +76,7 @@ std::string WhileStatement::GetC(SymbolTable& table, FormattingConfig& config) {
 }
 
 RiscCodegenOutput WhileStatement::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                          FormattingConfig& formatting_config) {
+                                          configs::FormattingConfig& formatting_config) {
     while_counter++;
     std::string while_mark = std::to_string(while_counter);
     std::string code = "while_start" + while_mark + ":\n";
@@ -93,3 +93,4 @@ RiscCodegenOutput WhileStatement::GetRisc(SymbolTable& table, RegisterAllocator&
     code += "while_end" + while_mark + ":\n";
     return {code, std::nullopt};
 }
+}  // namespace compiler::ast

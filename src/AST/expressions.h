@@ -2,12 +2,12 @@
 #define EXPRESSIONS_H
 
 #include "ASTNode.h"
-
+namespace compiler::ast {
 class Expression : public ASTNode {
 public:
-    std::string GetC(SymbolTable& symbol_table, FormattingConfig& formatting_config) override = 0;
+    std::string GetC(SymbolTable& symbol_table, configs::FormattingConfig& formatting_config) override = 0;
     RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              FormattingConfig&) override = 0;
+                              configs::FormattingConfig&) override = 0;
 };
 
 class NumberExpression final : public Expression {
@@ -17,10 +17,10 @@ public:
     int const& GetValue() const { return value_; }
 
     std::string GetC([[maybe_unused]] SymbolTable& table,
-                     [[maybe_unused]] FormattingConfig& formatting_config) override;
+                     [[maybe_unused]] configs::FormattingConfig& formatting_config) override;
 
     RiscCodegenOutput GetRisc([[maybe_unused]] SymbolTable& table, RegisterAllocator& allocator,
-                              FormattingConfig& formatting_config) override;
+                              configs::FormattingConfig& formatting_config) override;
 
 private:
     int value_;
@@ -33,10 +33,10 @@ public:
     std::string const& GetName() const { return name_; }
 
     std::string GetC(SymbolTable& table,
-                     [[maybe_unused]] FormattingConfig& formatting_config) override;
+                     [[maybe_unused]] configs::FormattingConfig& formatting_config) override;
 
     RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              FormattingConfig& formatting_config) override;
+                              configs::FormattingConfig& formatting_config) override;
 
 private:
     std::string name_;
@@ -52,10 +52,10 @@ public:
     std::unique_ptr<Expression> const& GetRightExpression() const { return right_; }
     Token const& GetOP() const { return op_; }
 
-    std::string GetC(SymbolTable& table, FormattingConfig& formatting_config) override;
+    std::string GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) override;
 
     RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              FormattingConfig& formatting_config) override;
+                              configs::FormattingConfig& formatting_config) override;
 
 private:
     std::unique_ptr<Expression> left_;
@@ -71,13 +71,14 @@ public:
     std::unique_ptr<Expression> const& GetExpression() const { return expression_; }
     bool IsNegative() const { return negative_; }
 
-    std::string GetC(SymbolTable& table, FormattingConfig& formatting_config) override;
+    std::string GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) override;
 
     RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              FormattingConfig& formatting_config) override;
+                              configs::FormattingConfig& formatting_config) override;
 
 private:
     std::unique_ptr<Expression> expression_;
     bool negative_;
 };
+}  // namespace compiler::ast
 #endif

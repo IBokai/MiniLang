@@ -1,5 +1,6 @@
 #include "parser.h"
 
+namespace compiler::parser {
 std::unique_ptr<Expression> Parser::ParseExpression() { return ParseBinaryExpression(0); }
 
 std::unique_ptr<Expression> Parser::ParseBinaryExpression(int minPrecedence) {
@@ -50,3 +51,5 @@ std::unique_ptr<Expression> Parser::ParsePrimaryExpression() {
     }
     throw std::runtime_error("Expected number, variable or '('");
 }
+
+}  // namespace compiler::parser

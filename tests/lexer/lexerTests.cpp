@@ -3,6 +3,9 @@
 #include "../../src/lexer/lexer.h"
 #include "../util/testsUtil.h"
 
+namespace tests::lexertests {
+using namespace compiler::lexer;
+using namespace util;
 TEST(LexerTest, basic) {
     std::string filename = "../samples/basic.mlang";
     Lexer l(filename);
@@ -135,3 +138,4 @@ TEST(LexerTest, nestedWhile) {
         {TokenType::ENDFILE, "EOF", {10, 0}}};
     CheckTokenVector(tokens, correct_tokens);
 }
+}  // namespace tests::lexertests

@@ -1,13 +1,14 @@
 #include "expressions.h"
 
+namespace compiler::ast {
 std::string NumberExpression::GetC([[maybe_unused]] SymbolTable& table,
-                                   [[maybe_unused]] FormattingConfig& formatting_config) {
+                                   [[maybe_unused]] configs::FormattingConfig& formatting_config) {
     return std::to_string(value_);
 }
 
 RiscCodegenOutput NumberExpression::GetRisc([[maybe_unused]] SymbolTable& table,
                                             RegisterAllocator& allocator,
-                                            FormattingConfig& formatting_config) {
+                                            configs::FormattingConfig& formatting_config) {
     std::string code = formatting_config.GetIndent() + "li ";
     std::string reg = allocator.Allocate().value();
     code += reg + ", " + std::to_string(value_) + "\n";
@@ -15,7 +16,7 @@ RiscCodegenOutput NumberExpression::GetRisc([[maybe_unused]] SymbolTable& table,
 }
 
 std::string VariableExpression::GetC(SymbolTable& table,
-                                     [[maybe_unused]] FormattingConfig& formatting_config) {
+                                     [[maybe_unused]] configs::FormattingConfig& formatting_config) {
     if (table.CheckSymbol(name_)) {
         return name_;
     }
@@ -24,7 +25,7 @@ std::string VariableExpression::GetC(SymbolTable& table,
 }
 
 RiscCodegenOutput VariableExpression::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                              FormattingConfig& formatting_config) {
+                                              configs::FormattingConfig& formatting_config) {
     if (table.CheckSymbol(name_)) {
         std::string code = formatting_config.GetIndent() + "lw ";
         std::string reg = allocator.Allocate().value();
@@ -35,13 +36,13 @@ RiscCodegenOutput VariableExpression::GetRisc(SymbolTable& table, RegisterAlloca
         "Error while compiling variable expression, no variable with such name declared");
 }
 
-std::string BinaryExpression::GetC(SymbolTable& table, FormattingConfig& formatting_config) {
+std::string BinaryExpression::GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) {
     return "(" + left_->GetC(table, formatting_config) + " " + op_.text_ + " " +
            right_->GetC(table, formatting_config) + ")";
 }
 
 RiscCodegenOutput BinaryExpression::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                            FormattingConfig& formatting_config) {
+                                            configs::FormattingConfig& formatting_config) {
     std::string code = "";
     auto left_expreesion_codegen = left_->GetRisc(table, allocator, formatting_config);
     code += left_expreesion_codegen.code;
@@ -96,7 +97,7 @@ RiscCodegenOutput BinaryExpression::GetRisc(SymbolTable& table, RegisterAllocato
     return {code, left_reg};
 }
 
-std::string UnaryExpression::GetC(SymbolTable& table, FormattingConfig& formatting_config) {
+std::string UnaryExpression::GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) {
     if (negative_) {
         return "-" + expression_->GetC(table, formatting_config);
     }
@@ -104,7 +105,7 @@ std::string UnaryExpression::GetC(SymbolTable& table, FormattingConfig& formatti
 }
 
 RiscCodegenOutput UnaryExpression::GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                           FormattingConfig& formatting_config) {
+                                           configs::FormattingConfig& formatting_config) {
     std::string code = "";
     auto expression_codegen = expression_->GetRisc(table, allocator, formatting_config);
     code = expression_codegen.code;
@@ -112,3 +113,4 @@ RiscCodegenOutput UnaryExpression::GetRisc(SymbolTable& table, RegisterAllocator
             expression_codegen.reg.value() + "\n";
     return {code, expression_codegen.reg.value()};
 }
+}  // namespace compiler::ast

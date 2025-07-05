@@ -4,8 +4,9 @@
 #include <fstream>
 #include <vector>
 
-#include "../token/token.h"
+#include "token/token.h"
 
+namespace compiler::lexer {
 class Lexer {
 public:
     explicit Lexer(std::string const& filename);
@@ -21,4 +22,6 @@ private:
     size_t line_index_;
     size_t position_;
 };
+}  // namespace compiler::lexer
+
 #endif

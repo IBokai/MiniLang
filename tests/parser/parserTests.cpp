@@ -2,7 +2,9 @@
 
 #include "../../src/parser/parser.h"
 #include "../util/testsUtil.h"
-
+namespace tests::parsertests {
+using namespace compiler::parser;
+using namespace util;
 TEST(ParserTest, basic) {
     std::vector<Token> tokens = {
         {TokenType::VAR, "a", {0, 0}},      {TokenType::ASSIGNMENT, "=", {0, 1}},
@@ -384,3 +386,4 @@ TEST(ParserTest, nestedWhile) {
         }
     }
 }
+}  // namespace tests::parsertests
