@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CODEGENERATOR_H
+#define CODEGENERATOR_H
 
 #include "../AST/ASTNode.h"
 #include "../configs/configs.h"
@@ -29,3 +30,4 @@ private:
     std::string GenerateRisc(std::vector<std::unique_ptr<ASTNode>> const& ast);
 };
 }  // namespace compiler::codegenerator
+#endif

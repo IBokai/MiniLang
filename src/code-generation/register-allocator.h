@@ -1,4 +1,5 @@
-#pragma once
+#ifndef REGISTER_ALLOCATOR_H
+#define REGISTER_ALLOCATOR_H
 
 #include <optional>
 #include <string>
@@ -41,3 +42,4 @@ private:
     std::vector<bool> used_;
 };
 }  // namespace compiler::codegenerator
+#endif

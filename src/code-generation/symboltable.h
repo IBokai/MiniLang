@@ -1,4 +1,6 @@
-#pragma once
+#ifndef SYMBOLTABLE_H
+#define SYMBOLTABLE_H
+
 #include <stack>
 #include <string>
 #include <unordered_map>
@@ -36,3 +38,4 @@ private:
     int spill_count_;
 };
 }  // namespace compiler::codegenerator
+#endif
