@@ -2,16 +2,17 @@
 #include "../lexer/lexer.h"
 #include "../parser/parser.h"
 
+namespace compiler {
 class Compiler {
 public:
-    explicit Compiler(CompilerConfig& config) : config_(config){};
+    explicit Compiler(configs::CompilerConfig& config) : config_(config){};
 
     void Compile(std::string const& input_path, std::string const& output_path) {
-        Lexer lexer(input_path);
+        lexer::Lexer lexer(input_path);
         auto tokens = lexer.Tokenize();
-        Parser parser(std::move(tokens));
+        parser::Parser parser(std::move(tokens));
         auto ast = parser.Parse();
-        CodeGenerator generator = CodeGenerator(config_);
+        codegenerator::CodeGenerator generator(config_.GetLanguage());
         std::string code = generator.Generate(ast);
         std::ofstream output(output_path);
         if (!output) {
@@ -21,5 +22,6 @@ public:
     }
 
 private:
-    CompilerConfig config_;
+    configs::CompilerConfig config_;
 };
+}  // namespace compiler

@@ -21,6 +21,7 @@ add_executable(compiler
     src/parser/statementParser.cpp
     src/AST/expressions-codegenerators.cpp
     src/AST/statements-codegenerators.cpp
+    src/code-generation/codegenerator.cpp
 )
 
 add_executable(tests

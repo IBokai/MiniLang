@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
+namespace compiler::lexer {
 std::unordered_map<std::string, TokenType> keyword_types{
     {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
     {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
@@ -108,3 +109,4 @@ Lexer::Lexer(std::string const& filename) {
     position_ = 0;
     line_index_ = 0;
 }
+}  // namespace compiler::lexer

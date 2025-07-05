@@ -10,11 +10,11 @@
 #include "parser/parser.h"
 
 int main(int argc, char* argv[]) {
-    CLIParser cli_parser = CLIParser();
+    cliparser::CLIParser cli_parser = cliparser::CLIParser();
     try {
         auto [input, output, config] = cli_parser.Parse(argv, argc);
         try {
-            Compiler compiler = Compiler(config);
+            compiler::Compiler compiler = compiler::Compiler(config);
             compiler.Compile(input, output);
         } catch (const std::exception& e) {
             std::cerr << "Compilation error" << e.what() << '\n';

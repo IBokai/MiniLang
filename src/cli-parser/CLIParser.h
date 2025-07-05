@@ -3,7 +3,8 @@
 #include <unordered_map>
 
 #include "../configs/configs.h"
-
+namespace cliparser {
+using namespace compiler::configs;
 class CLIParser {
 public:
     explicit CLIParser() {}
@@ -39,3 +40,4 @@ private:
         return std::regex_match(option, validator);
     }
 };
+}  // namespace cliparser

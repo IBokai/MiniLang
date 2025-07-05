@@ -2,6 +2,7 @@
 
 #include <string>
 
+namespace compiler::configs {
 enum class Language { C, RISC };
 
 class CompilerConfig {
@@ -25,3 +26,4 @@ public:
 private:
     size_t indent_size_;
 };
+}  // namespace compiler::configs

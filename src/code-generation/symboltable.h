@@ -2,7 +2,7 @@
 #include <stack>
 #include <string>
 #include <unordered_map>
-
+namespace compiler::codegenerator {
 class SymbolTable {
 public:
     SymbolTable() : current_offset_(-4), spill_count_(0) {}
@@ -35,3 +35,4 @@ private:
     int current_offset_;
     int spill_count_;
 };
+}  // namespace compiler::codegenerator

@@ -9,8 +9,11 @@
 #include "../code-generation/register-allocator.h"
 #include "../code-generation/symboltable.h"
 #include "../configs/configs.h"
-#include "../token/token.h"
+#include "../lexer/token/token.h"
 
+namespace compiler::ast {
+using namespace codegenerator;
+using namespace lexer;
 struct RiscCodegenOutput {
     std::string code;
     std::optional<std::string> reg;
@@ -19,8 +22,10 @@ struct RiscCodegenOutput {
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
-    virtual std::string GetC(SymbolTable& table, FormattingConfig& formatting_config) = 0;
+    virtual std::string GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) = 0;
     virtual RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                      FormattingConfig& formatting_config) = 0;
+                                      configs::FormattingConfig& formatting_config) = 0;
 };
+}  // namespace compiler::ast
+
 #endif
