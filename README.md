@@ -6,7 +6,7 @@ A compiler for a simple programming language that translates source code into C 
 Features:
 - **Lexer**
 - **Parser**
-- **Code Generation** for **C** and "RISC-V Assembly"
+- **Code Generation** for **C** and **RISC-V Assembly**
 - Supported language constructs:
     - Variables
     - Arithmetic expressions
