@@ -1,19 +1,23 @@
-#include "../code-generation/codegenerator.h"
+#ifndef COMPILER_H
+#define COMPILER_H
+
+#include "../code-generation/generator-factory/factory.h"
 #include "../lexer/lexer.h"
 #include "../parser/parser.h"
 
 namespace compiler {
 class Compiler {
 public:
-    explicit Compiler(configs::CompilerConfig& config) : config_(config){};
+    explicit Compiler(configs::CompilerConfig const& config) : config_(config){};
 
-    void Compile(std::string const& input_path, std::string const& output_path) {
+    void Compile(std::string const& input_path, std::string const& output_path) const {
         lexer::Lexer lexer(input_path);
         auto tokens = lexer.Tokenize();
         parser::Parser parser(std::move(tokens));
         auto ast = parser.Parse();
-        codegenerator::CodeGenerator generator(config_.GetLanguage());
-        std::string code = generator.Generate(ast);
+        auto formatting_config = configs::FormattingConfig();
+        auto generator = codegenerator::CreateGenerator(config_.GetLanguage(), formatting_config);
+        std::string code = generator->Generate(ast);
         std::ofstream output(output_path);
         if (!output) {
             throw std::runtime_error("Failed to open output file");
@@ -25,3 +29,4 @@ private:
     configs::CompilerConfig config_;
 };
 }  // namespace compiler
+#endif

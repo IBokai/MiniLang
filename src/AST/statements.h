@@ -7,9 +7,7 @@
 namespace compiler::ast {
 class Statement : public ASTNode {
 public:
-    std::string GetC(SymbolTable& symbol_table, configs::FormattingConfig& config) override = 0;
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              configs::FormattingConfig& formatting_config) override = 0;
+    void Accept(ASTVisitor* visitor) override = 0;
 };
 
 class AssignmentStatement final : public Statement {
@@ -20,10 +18,7 @@ public:
     std::unique_ptr<Expression> const& GetExpression() const { return expression_; }
     std::string const& GetName() const { return name_; }
 
-    std::string GetC(SymbolTable& table, configs::FormattingConfig& config) override;
-
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              configs::FormattingConfig& formatting_config) override;
+    void Accept(ASTVisitor* visitor) override { visitor->Visit(this); };
 
 private:
     std::string name_;
@@ -39,10 +34,7 @@ public:
     std::unique_ptr<Expression> const& GetCondition() const { return condition_; }
     std::vector<std::unique_ptr<Statement>> const& GetBody() const { return body_; }
 
-    std::string GetC(SymbolTable& table, configs::FormattingConfig& config) override;
-
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              configs::FormattingConfig& formatting_config) override;
+    void Accept(ASTVisitor* visitor) override { visitor->Visit(this); };
 
 private:
     std::unique_ptr<Expression> condition_;
@@ -58,10 +50,7 @@ public:
     std::unique_ptr<Expression> const& GetCondition() const { return condition_; }
     std::vector<std::unique_ptr<Statement>> const& GetBody() const { return body_; }
 
-    std::string GetC(SymbolTable& table, configs::FormattingConfig& config) override;
-
-    RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                              configs::FormattingConfig& formatting_config) override;
+    void Accept(ASTVisitor* visitor) override { visitor->Visit(this); };
 
 private:
     std::unique_ptr<Expression> condition_;

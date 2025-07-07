@@ -12,20 +12,32 @@
 #include "../lexer/token/token.h"
 
 namespace compiler::ast {
-using namespace codegenerator;
-using namespace lexer;
-struct RiscCodegenOutput {
-    std::string code;
-    std::optional<std::string> reg;
+
+// definitions for ASTvisitor
+class NumberExpression;
+class VariableExpression;
+class BinaryExpression;
+class UnaryExpression;
+class AssignmentStatement;
+class IfStatement;
+class WhileStatement;
+
+class ASTVisitor {
+public:
+    virtual void Visit(NumberExpression const* node) = 0;
+    virtual void Visit(VariableExpression const* node) = 0;
+    virtual void Visit(BinaryExpression const* node) = 0;
+    virtual void Visit(UnaryExpression const* node) = 0;
+    virtual void Visit(AssignmentStatement const* node) = 0;
+    virtual void Visit(IfStatement const* node) = 0;
+    virtual void Visit(WhileStatement const* node) = 0;
+    virtual ~ASTVisitor() = default;
 };
 
 class ASTNode {
 public:
     virtual ~ASTNode() = default;
-    virtual std::string GetC(SymbolTable& table, configs::FormattingConfig& formatting_config) = 0;
-    virtual RiscCodegenOutput GetRisc(SymbolTable& table, RegisterAllocator& allocator,
-                                      configs::FormattingConfig& formatting_config) = 0;
+    virtual void Accept(ASTVisitor* visitor) = 0;
 };
 }  // namespace compiler::ast
-
 #endif

@@ -3,11 +3,8 @@
 #include <string>
 
 #include "cli-parser/CLIParser.h"
-#include "code-generation/codegenerator.h"
 #include "compiler/compiler.h"
 #include "configs/configs.h"
-#include "lexer/lexer.h"
-#include "parser/parser.h"
 
 int main(int argc, char* argv[]) {
     cliparser::CLIParser cli_parser = cliparser::CLIParser();
