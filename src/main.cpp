@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
             compiler::Compiler compiler = compiler::Compiler(config);
             compiler.Compile(input, output);
         } catch (const std::exception& e) {
-            std::cerr << "Compilation error" << e.what() << '\n';
+            std::cerr << "Compilation error: " << e.what() << '\n';
         }
 
     } catch (const std::exception& e) {
