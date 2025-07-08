@@ -30,7 +30,9 @@ jobs:
           - name: install cppcheck
             run: sudo apt install cppcheck
           - name: run cppcheck
-            run: cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=unusedFunction:tests/lexer/lexerExceptionsTests.cpp --suppress=unusedFunction:tests/lexer/lexerTests.cpp --suppress=unusedFunction:tests/parser/parserExceptionsTests.cpp --suppress=unusedFunction:tests/parser/parserTests.cpp --library=googletest src/ tests/
+            run: | 
+              cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem src/
+              cppcheck --enable=all --error-exitcode=1 --suppress=missingIncludeSystem --suppress=unusedFunction --library=googletest tests/
     formatting-check: 
         runs-on: ubuntu-latest
         steps:
