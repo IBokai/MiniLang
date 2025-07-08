@@ -2,6 +2,7 @@
 #define STATEMENTS_H
 
 #include "ASTNode.h"
+#include "expressions.h"
 
 namespace compiler::ast {
 class Statement : public ASTNode {

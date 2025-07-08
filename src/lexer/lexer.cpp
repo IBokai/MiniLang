@@ -5,11 +5,11 @@
 #include <unordered_set>
 
 namespace compiler::lexer {
-std::unordered_map<std::string, TokenType> const keyword_types{
+std::unordered_map<std::string, TokenType> const KeywordTypes{
     {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
     {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
 
-std::unordered_map<std::string, TokenType> const operator_types{
+std::unordered_map<std::string, TokenType> const OperatorTypes{
     {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
     {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
     {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};
@@ -79,7 +79,7 @@ Token Lexer::TokenizeVarOrKeyword() {
     }
     if (keywords.count(token_text)) {
         if (!isalpha(line_[position_]) && !isdigit(line_[position_])) {
-            return {keyword_types.at(token_text), token_text, {line_index_, starting_position}};
+            return {KeywordTypes.at(token_text), token_text, {line_index_, starting_position}};
         } else {
             throw std::runtime_error("error tokenizing VAR or KEYWORD");
         }
@@ -98,7 +98,7 @@ Token Lexer::TokenizeOperator() {
     size_t starting_position = position_;
     token_text += line_[position_];
     position_++;
-    return {operator_types.at(token_text), token_text, {line_index_, starting_position}};
+    return {OperatorTypes.at(token_text), token_text, {line_index_, starting_position}};
 }
 
 Lexer::Lexer(std::string const& filename) {
