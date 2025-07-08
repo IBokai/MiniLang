@@ -1,4 +1,6 @@
-#pragma once
+#ifndef RISC_CODEGENERATOR
+#define RISC_CODEGENERATOR
+
 #include "../codegenerator.h"
 
 namespace compiler::codegenerator {
@@ -152,3 +154,4 @@ private:
     int while_counter_;
 };
 }  // namespace compiler::codegenerator
+#endif

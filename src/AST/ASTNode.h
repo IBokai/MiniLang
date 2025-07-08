@@ -3,12 +3,9 @@
 
 #include <iostream>
 #include <memory>
-#include <string>
-#include <vector>
 
 #include "../code-generation/register-allocator.h"
 #include "../code-generation/symboltable.h"
-#include "../configs/configs.h"
 #include "../lexer/token/token.h"
 
 namespace compiler::ast {

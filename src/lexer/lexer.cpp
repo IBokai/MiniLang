@@ -5,11 +5,11 @@
 #include <unordered_set>
 
 namespace compiler::lexer {
-std::unordered_map<std::string, TokenType> keyword_types{
+std::unordered_map<std::string, TokenType> const keyword_types{
     {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
     {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
 
-std::unordered_map<std::string, TokenType> operator_types{
+std::unordered_map<std::string, TokenType> const operator_types{
     {"=", TokenType::ASSIGNMENT}, {"+", TokenType::PLUS},     {"-", TokenType::MINUS},
     {"/", TokenType::DIVIDE},     {"*", TokenType::MULTIPLY}, {"<", TokenType::LESS},
     {">", TokenType::MORE},       {"(", TokenType::LPAREN},   {")", TokenType::RPAREN}};

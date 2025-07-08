@@ -1,9 +1,9 @@
 #ifndef SYMBOLTABLE_H
 #define SYMBOLTABLE_H
 
-#include <stack>
 #include <string>
 #include <unordered_map>
+
 namespace compiler::codegenerator {
 class SymbolTable {
 public:

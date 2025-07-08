@@ -2,6 +2,7 @@
 #define TOKEN_H
 
 #include <string>
+
 namespace compiler::lexer {
 enum class TokenType {
     INT,

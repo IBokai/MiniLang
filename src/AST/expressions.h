@@ -2,8 +2,11 @@
 #define EXPRESSIONS_H
 
 #include "ASTNode.h"
+
 namespace compiler::ast {
+
 using namespace lexer;
+
 class Expression : public ASTNode {
 public:
     void Accept(ASTVisitor* visitor) override = 0;

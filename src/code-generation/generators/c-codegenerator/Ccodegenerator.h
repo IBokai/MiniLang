@@ -1,6 +1,8 @@
-#pragma once
+#ifndef C_CODEGENERATOR
+#define C_CODEGENERATOR
 
 #include "../codegenerator.h"
+
 namespace compiler::codegenerator {
 template <>
 class CodeGenerator<configs::Language::C> : public ICodeGenerator {
@@ -96,3 +98,4 @@ private:
     configs::FormattingConfig formatting_config_;
 };
 }  // namespace compiler::codegenerator
+#endif

@@ -7,7 +7,9 @@
 #include "../../configs/configs.h"
 
 namespace compiler::codegenerator {
+
 using namespace ast;
+
 class ICodeGenerator : public ASTVisitor {
 public:
     virtual std::string Generate(std::vector<std::unique_ptr<ASTNode>> const& ast) = 0;

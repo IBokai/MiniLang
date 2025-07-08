@@ -1,4 +1,5 @@
 #include "parser.h"
+
 namespace compiler::parser {
 std::unique_ptr<Statement> Parser::ParseStatement() {
     if (current_token_.type_ == TokenType::VAR) {
