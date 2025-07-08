@@ -1,10 +1,10 @@
 #include "parser.h"
 
+namespace compiler::parser {
 std::unique_ptr<Statement> Parser::ParseStatement() {
     if (current_token_.type_ == TokenType::VAR) {
         auto result = ParseAssignment();
         if (current_token_.type_ != TokenType::SEMICOL) {
-            std::cout << current_token_.text_ << '\n';
             throw std::runtime_error("Expected semicolon after assignment statement");
         }
         Advance();
@@ -65,3 +65,4 @@ std::unique_ptr<Statement> Parser::ParseWhileStatement() {
     Advance();
     return std::make_unique<WhileStatement>(std::move(condition), std::move(body));
 }
+}  // namespace compiler::parser

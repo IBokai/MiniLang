@@ -7,6 +7,9 @@
 #include "../../src/AST/expressions.h"
 #include "../../src/AST/statements.h"
 
+namespace tests::util {
+using namespace compiler::ast;
+using namespace compiler::lexer;
 template <typename ExpectedT>
 struct ASTChecker {
     static ExpectedT* Check(ASTNode* node) {
@@ -91,4 +94,5 @@ inline void CheckTokenVector(std::vector<Token> const& tokens,
         EXPECT_EQ(tokens[i].position_, correct_tokens[i].position_);
     }
 }
+}  // namespace tests::util
 #endif

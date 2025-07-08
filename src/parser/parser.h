@@ -3,7 +3,12 @@
 
 #include "../AST/expressions.h"
 #include "../AST/statements.h"
-#include "../token/token.h"
+#include "../lexer/token/token.h"
+
+namespace compiler::parser {
+
+using namespace ast;
+using namespace lexer;
 
 class Parser {
 public:
@@ -49,4 +54,5 @@ private:
     std::vector<Token> tokens_;
     size_t position_;
 };
+}  // namespace compiler::parser
 #endif

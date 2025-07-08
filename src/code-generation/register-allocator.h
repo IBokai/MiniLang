@@ -1,10 +1,12 @@
-#pragma once
+#ifndef REGISTER_ALLOCATOR_H
+#define REGISTER_ALLOCATOR_H
 
 #include <optional>
 #include <string>
 #include <unordered_map>
 #include <vector>
 
+namespace compiler::codegenerator {
 class RegisterAllocator {
 public:
     RegisterAllocator() : registers_({"t0", "t1", "t2", "t3", "t4", "t5", "t6"}) {
@@ -40,3 +42,5 @@ private:
     std::vector<std::string> registers_;
     std::vector<bool> used_;
 };
+}  // namespace compiler::codegenerator
+#endif

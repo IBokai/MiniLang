@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace compiler::lexer {
 enum class TokenType {
     INT,
     VAR,
@@ -35,5 +36,5 @@ public:
     Token(TokenType const& type, std::string text, std::pair<size_t, size_t> cordinates)
         : type_(type), text_(std::move(text)), position_(std::move(cordinates)){};
 };
-
+}  // namespace compiler::lexer
 #endif
