@@ -6,8 +6,8 @@
 #include "../generators/risc-codegenerator/risccodegenerator.h"
 
 namespace compiler::codegenerator {
-std::unique_ptr<ICodeGenerator> CreateGenerator(configs::Language language,
-                                                configs::FormattingConfig& formatting_config) {
+inline std::unique_ptr<ICodeGenerator> CreateGenerator(
+    configs::Language language, configs::FormattingConfig& formatting_config) {
     switch (language) {
         case configs::Language::C:
             return std::make_unique<CodeGenerator<configs::Language::C>>(formatting_config);
