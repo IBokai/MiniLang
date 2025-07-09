@@ -88,7 +88,7 @@ public:
         for (auto const& node : ast) {
             node->Accept(this);
         }
-        code_ += formatting_config_.GetIndent() + "return 0;\n}";
+        code_ += formatting_config_.GetIndent() + "return 0;\n}\n";
         return code_;
     }
 

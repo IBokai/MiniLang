@@ -26,10 +26,14 @@ add_executable(tests
     tests/lexer/lexerExceptionsTests.cpp
     tests/parser/parserTests.cpp
     tests/parser/parserExceptionsTests.cpp
+    tests/code-generator/C/CcodegeneratorTests.cpp
+    tests/code-generator/C/CcodegeneratorExceptionsTests.cpp
+    tests/code-generator/risc/riscCodegeneratorTests.cpp
+    tests/code-generator/risc/riscCodegeneratorExceptionsTests.cpp
     src/lexer/lexer.cpp
     src/parser/parser.cpp
     src/parser/expressionParser.cpp
-    src/parser/statementParser.cpp 
+    src/parser/statementParser.cpp
 )
 
 target_link_libraries(tests
