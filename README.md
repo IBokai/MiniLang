@@ -69,7 +69,7 @@ gcc output.c -o output
 riscv64-linux-gnu-as -march=rv64gc output.s -o output.o
 ```
 ```bash
-riscv64-linux-gnu-ld temp.o -o file.exe
+riscv64-linux-gnu-ld output.o -o file.exe
 ```
 ```bash
 qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64 ./file.exe
