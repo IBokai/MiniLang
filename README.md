@@ -53,7 +53,7 @@ cd build/
 ```
 2) Run the compiler
 ```bash
-./main <input_path> <output_path> <(default: RISC-V) language(C|RISC-V)>
+./compiler <input_path> <output_path> <(default: RISC-V) language(C|RISC-V)>
 ```
 ## How to launch output
 - C
@@ -69,7 +69,7 @@ gcc output.c -o output
 riscv64-linux-gnu-as -march=rv64gc output.s -o output.o
 ```
 ```bash
-riscv64-linux-gnu-ld temp.o -o file.exe
+riscv64-linux-gnu-ld output.o -o file.exe
 ```
 ```bash
 qemu-riscv64 -L /usr/riscv64-linux-gnu -cpu rv64 ./file.exe
