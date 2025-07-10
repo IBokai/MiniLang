@@ -1,11 +1,18 @@
+#include "../exceptions/exceptions.h"
 #include "parser.h"
 
 namespace compiler::parser {
+
+using namespace exceptions;
+
 std::unique_ptr<Statement> Parser::ParseStatement() {
     if (current_token_.type_ == TokenType::VAR) {
         auto result = ParseAssignment();
         if (current_token_.type_ != TokenType::SEMICOL) {
-            throw std::runtime_error("Expected semicolon after assignment statement");
+            throw CompilerException(
+                "Syntax error at (" + std::to_string(current_token_.position_.first) + " " +
+                std::to_string(current_token_.position_.second) +
+                "): expected ';' after assignment, but got '" + current_token_.text_ + "'");
         }
         Advance();
         return result;
@@ -14,7 +21,10 @@ std::unique_ptr<Statement> Parser::ParseStatement() {
     } else if (current_token_.type_ == TokenType::WHILE) {
         return ParseWhileStatement();
     } else {
-        throw std::runtime_error("Expected statement");
+        throw CompilerException(
+            "Syntax error at (" + std::to_string(current_token_.position_.first) + " " +
+            std::to_string(current_token_.position_.second) +
+            "): expected identifier, 'if', or 'while', but got '" + current_token_.text_ + "'");
     }
 }
 
@@ -22,7 +32,10 @@ std::unique_ptr<Statement> Parser::ParseAssignment() {
     std::string const varname = current_token_.text_;
     Advance();
     if (current_token_.type_ != TokenType::ASSIGNMENT) {
-        throw std::runtime_error("Expected assignment sign after variable name");
+        throw CompilerException(
+            "Syntax error at (" + std::to_string(current_token_.position_.first) + " " +
+            std::to_string(current_token_.position_.second) +
+            "): expected '=' after variable name, but got '" + current_token_.text_ + "'");
     }
     Advance();
     return std::make_unique<AssignmentStatement>(varname, ParseExpression());
@@ -32,14 +45,21 @@ std::unique_ptr<Statement> Parser::ParseIfStatement() {
     Advance();
     auto condition = ParseExpression();
     if (current_token_.type_ != TokenType::THEN) {
-        throw std::runtime_error(
-            "Expected then keyword after condition expression in if statement");
+        throw CompilerException("Syntax error at (" +
+                                std::to_string(current_token_.position_.first) + " " +
+                                std::to_string(current_token_.position_.second) +
+                                "): expected 'then' after condition in 'if' statement, but got '" +
+                                current_token_.text_ + "'");
     }
     Advance();
     std::vector<std::unique_ptr<Statement>> body;
     while (current_token_.type_ != TokenType::FI) {
         if (current_token_.type_ == TokenType::ENDFILE) {
-            throw std::runtime_error("Expected fi keyword before the end of the program");
+            throw CompilerException("Syntax error at (" +
+                                    std::to_string(current_token_.position_.first) + " " +
+                                    std::to_string(current_token_.position_.second) +
+                                    "): expected 'fi' at end of 'if' statement, but got '" +
+                                    current_token_.text_ + "'");
         }
         body.push_back(ParseStatement());
     }
@@ -51,14 +71,21 @@ std::unique_ptr<Statement> Parser::ParseWhileStatement() {
     Advance();
     auto condition = ParseExpression();
     if (current_token_.type_ != TokenType::DO) {
-        throw std::runtime_error(
-            "Expected do keyword after condition epxression in while statement");
+        throw CompilerException("Syntax error at (" +
+                                std::to_string(current_token_.position_.first) + " " +
+                                std::to_string(current_token_.position_.second) +
+                                "): expected 'do' after condition in 'while' statement, but got '" +
+                                current_token_.text_ + "'");
     }
     Advance();
     std::vector<std::unique_ptr<Statement>> body;
     while (current_token_.type_ != TokenType::DONE) {
         if (current_token_.type_ == TokenType::ENDFILE) {
-            throw std::runtime_error("Expected done keyword before the end of the program");
+            throw CompilerException("Syntax error at (" +
+                                    std::to_string(current_token_.position_.first) + " " +
+                                    std::to_string(current_token_.position_.second) +
+                                    "): expected 'done' at end of 'while' statement, but got '" +
+                                    current_token_.text_ + "'");
         }
         body.push_back(ParseStatement());
     }

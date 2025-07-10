@@ -1,6 +1,10 @@
+#include "../exceptions/exceptions.h"
 #include "parser.h"
 
 namespace compiler::parser {
+
+using namespace exceptions;
+
 std::unique_ptr<Expression> Parser::ParseExpression() { return ParseBinaryExpression(0); }
 
 std::unique_ptr<Expression> Parser::ParseBinaryExpression(int minPrecedence) {
@@ -34,7 +38,10 @@ std::unique_ptr<Expression> Parser::ParsePrimaryExpression() {
         Advance();
         auto inner_expression = ParseExpression();
         if (current_token_.type_ != TokenType::RPAREN) {
-            throw std::runtime_error("Expected ')'");
+            throw CompilerException("Syntax error at (" +
+                                    std::to_string(current_token_.position_.first) + " " +
+                                    std::to_string(current_token_.position_.second) +
+                                    "): expected ')', but got '" + current_token_.text_ + "'");
         }
         Advance();
         return inner_expression;
@@ -49,7 +56,10 @@ std::unique_ptr<Expression> Parser::ParsePrimaryExpression() {
         Advance();
         return result;
     }
-    throw std::runtime_error("Expected number, variable or '('");
+    throw CompilerException("Syntax error at (" + std::to_string(current_token_.position_.first) +
+                            " " + std::to_string(current_token_.position_.second) +
+                            "): expected number, variable, or '(', but got '" +
+                            current_token_.text_ + "'");
 }
 
 }  // namespace compiler::parser

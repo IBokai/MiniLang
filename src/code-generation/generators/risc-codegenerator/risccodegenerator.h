@@ -1,9 +1,13 @@
 #ifndef RISC_CODEGENERATOR
 #define RISC_CODEGENERATOR
 
+#include "../../../exceptions/exceptions.h"
 #include "../codegenerator.h"
 
 namespace compiler::codegenerator {
+
+using namespace exceptions;
+
 template <>
 class CodeGenerator<configs::Language::RISC> : public ICodeGenerator {
 public:
@@ -21,9 +25,8 @@ public:
             result_register_ = allocator_.Allocate().value();
             code_ += result_register_ + ", " + table_.GetOffset(node->GetName()) + "\n";
         } else {
-            throw std::runtime_error(
-                "Error while compiling variable expression, no variable with such name "
-                "declared");
+            throw CompilerException("Code generation error: variable '" + node->GetName() +
+                                    "' is not declared");
         }
     }
 
