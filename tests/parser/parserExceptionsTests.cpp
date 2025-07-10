@@ -1,8 +1,13 @@
 #include <gtest/gtest.h>
 
+#include "../../src/exceptions/exceptions.h"
 #include "../../src/parser/parser.h"
+
 namespace tests::parsertests {
+
 using namespace compiler::parser;
+using namespace compiler::exceptions;
+
 TEST(ParserExceptionTest, noSemicolon) {
     std::vector<Token> tokens = {
         {TokenType::VAR, "num", {0, 0}}, {TokenType::ASSIGNMENT, "=", {0, 4}},
@@ -12,12 +17,13 @@ TEST(ParserExceptionTest, noSemicolon) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected semicolon after assignment statement");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()),
+                  "Syntax error at (1 0): expected ';' after assignment, but got 'EOF'");
     }
 }
 
-TEST(ParserExceptionTest, noStatement) {
+TEST(ParserExceptionTest, notStatement) {
     std::vector<Token> tokens = {{TokenType::INT, "2", {0, 0}},
                                  {TokenType::PLUS, "+", {0, 1}},
                                  {TokenType::INT, "3", {0, 2}},
@@ -26,8 +32,9 @@ TEST(ParserExceptionTest, noStatement) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected statement");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()),
+                  "Syntax error at (0 0): expected identifier, 'if', or 'while', but got '2'");
     }
 }
 
@@ -39,8 +46,9 @@ TEST(ParserExceptionTest, noAssign) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected assignment sign after variable name");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()),
+                  "Syntax error at (0 2): expected '=' after variable name, but got '3'");
     }
 }
 
@@ -58,9 +66,10 @@ TEST(ParserExceptionTest, noThen) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
+    } catch (CompilerException const& e) {
         EXPECT_EQ(std::string(e.what()),
-                  "Expected then keyword after condition expression in if statement");
+                  "Syntax error at (2 4): expected 'then' after condition in 'if' statement, but "
+                  "got 'a'");
     }
 }
 
@@ -78,8 +87,9 @@ TEST(ParserExceptionTest, noFi) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected fi keyword before the end of the program");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()),
+                  "Syntax error at (3 0): expected 'fi' at end of 'if' statement, but got 'EOF'");
     }
 }
 
@@ -97,9 +107,10 @@ TEST(ParserExceptionTest, noDo) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
+    } catch (CompilerException const& e) {
         EXPECT_EQ(std::string(e.what()),
-                  "Expected do keyword after condition epxression in while statement");
+                  "Syntax error at (2 4): expected 'do' after condition in 'while' statement, but "
+                  "got 'a'");
     }
 }
 
@@ -117,8 +128,10 @@ TEST(ParserExceptionTest, noDone) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected done keyword before the end of the program");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(
+            std::string(e.what()),
+            "Syntax error at (3 0): expected 'done' at end of 'while' statement, but got 'EOF'");
     }
 }
 
@@ -133,8 +146,9 @@ TEST(ParserExceptionTest, unexpectedToken) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected number, variable or '('");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()),
+                  "Syntax error at (0 6): expected number, variable, or '(', but got 'while'");
     }
 }
 
@@ -149,8 +163,8 @@ TEST(ParserExceptionTest, noClosingParenthesis) {
     try {
         p.Parse();
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()), "Expected ')'");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()), "Syntax error at (0 8): expected ')', but got ';'");
     }
 }
 }  // namespace tests::parsertests

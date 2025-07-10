@@ -1,9 +1,13 @@
 #ifndef C_CODEGENERATOR
 #define C_CODEGENERATOR
 
+#include "../../../exceptions/exceptions.h"
 #include "../codegenerator.h"
 
 namespace compiler::codegenerator {
+
+using namespace exceptions;
+
 template <>
 class CodeGenerator<configs::Language::C> : public ICodeGenerator {
 public:
@@ -16,9 +20,8 @@ public:
         if (table_.CheckSymbol(node->GetName())) {
             code_ += node->GetName();
         } else {
-            throw std::runtime_error(
-                "Error while compiling variable expression, no variable with such name "
-                "declared");
+            throw CompilerException("Code generation error: variable '" + node->GetName() +
+                                    "' is not declared");
         }
     }
 

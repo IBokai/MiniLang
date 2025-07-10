@@ -4,6 +4,7 @@
 #include "../../../src/AST/expressions.h"
 #include "../../../src/AST/statements.h"
 #include "../../../src/code-generation/generator-factory/factory.h"
+#include "../../../src/exceptions/exceptions.h"
 #include "../../../src/lexer/lexer.h"
 #include "../../../src/parser/parser.h"
 
@@ -13,6 +14,7 @@ using namespace compiler::ast;
 using namespace compiler::lexer;
 using namespace compiler::parser;
 using namespace compiler::codegenerator;
+using namespace compiler::exceptions;
 
 TEST(RiscCodegeneratorExcpetionTest, notDeclaredVariable) {
     Lexer lexer("../samples/codegenErrors/not-declared-variable.mlang");
@@ -24,10 +26,8 @@ TEST(RiscCodegeneratorExcpetionTest, notDeclaredVariable) {
     try {
         generator->Generate(ast);
         FAIL() << "Expected to throw an exception";
-    } catch (const std::exception& e) {
-        EXPECT_EQ(std::string(e.what()),
-                  "Error while compiling variable expression, no variable with such name "
-                  "declared");
+    } catch (CompilerException const& e) {
+        EXPECT_EQ(std::string(e.what()), "Code generation error: variable 'l' is not declared");
     }
 }
 }  // namespace tests::codegeneratortests

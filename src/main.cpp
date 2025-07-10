@@ -12,11 +12,11 @@ int main(int argc, char* argv[]) {
         try {
             compiler::Compiler compiler = compiler::Compiler(config);
             compiler.Compile(input, output);
-        } catch (const std::exception& e) {
-            std::cerr << "Compilation error: " << e.what() << '\n';
+        } catch (compiler::exceptions::CompilerException const& e) {
+            std::cerr << "Compilation error:\n" << e.what() << '\n';
         }
 
-    } catch (const std::exception& e) {
+    } catch (compiler::exceptions::CliParserException const& e) {
         std::cerr << "Command line arguments error: " << e.what() << '\n';
     }
 

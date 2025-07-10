@@ -4,7 +4,12 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "../exceptions/exceptions.h"
+
 namespace compiler::lexer {
+
+using namespace exceptions;
+
 std::unordered_map<std::string, TokenType> const KeywordTypes{
     {"if", TokenType::IF},       {"fi", TokenType::FI}, {"then", TokenType::THEN},
     {"while", TokenType::WHILE}, {"do", TokenType::DO}, {"done", TokenType::DONE}};
@@ -45,7 +50,9 @@ std::vector<Token> Lexer::Tokenize() {
                     break;
                 }
             } else {
-                throw std::runtime_error("Unexpected symbol");
+                throw CompilerException("Lexical error at (" + std::to_string(line_index_) + " " +
+                                        std::to_string(position_) + "): unexpected symbol: '" +
+                                        line_[position_] + "'");
             }
         }
         position_ = 0;
@@ -66,7 +73,8 @@ Token Lexer::TokenizeNumber() {
     if (!isalpha(line_[position_])) {
         return {TokenType::INT, token_text, {line_index_, starting_posistion}};
     }
-    throw std::runtime_error("error tokenizing NUMBER");
+    throw CompilerException("Lexical error at (" + std::to_string(line_index_) + " " +
+                            std::to_string(position_) + "): invalid number");
 }
 
 Token Lexer::TokenizeVarOrKeyword() {
@@ -81,7 +89,9 @@ Token Lexer::TokenizeVarOrKeyword() {
         if (!isalpha(line_[position_]) && !isdigit(line_[position_])) {
             return {KeywordTypes.at(token_text), token_text, {line_index_, starting_position}};
         } else {
-            throw std::runtime_error("error tokenizing VAR or KEYWORD");
+            throw CompilerException("Lexical error at (" + std::to_string(line_index_) + " " +
+                                    std::to_string(position_) +
+                                    "): invalid variable name or keyword");
         }
     }
     return {TokenType::VAR, token_text, {line_index_, starting_position}};
@@ -104,7 +114,7 @@ Token Lexer::TokenizeOperator() {
 Lexer::Lexer(std::string const& filename) {
     file_.open(filename);
     if (!file_) {
-        throw std::runtime_error("Error, while processing file");
+        throw CompilerException("Error, while processing file");
     }
     position_ = 0;
     line_index_ = 0;

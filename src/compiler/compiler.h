@@ -19,9 +19,6 @@ public:
         auto generator = codegenerator::CreateGenerator(config_.GetLanguage(), formatting_config);
         std::string code = generator->Generate(ast);
         std::ofstream output(output_path);
-        if (!output) {
-            throw std::runtime_error("Failed to open output file");
-        }
         output << code;
     }
 
