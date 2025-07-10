@@ -1,8 +1,8 @@
 #ifndef RISC_CODEGENERATOR
 #define RISC_CODEGENERATOR
 
-#include "../codegenerator.h"
 #include "../../../exceptions/exceptions.h"
+#include "../codegenerator.h"
 
 namespace compiler::codegenerator {
 
